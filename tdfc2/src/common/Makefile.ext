@@ -4,7 +4,7 @@ OBJTEMPL=obj_templ
 
 RMFILE=rm -f
 CAT=cat
-CALCULUS=calculus
+CALCULUS=${BASE_DIR}/../calculus/obj/src/calculus
 #MAKE_ERR=make_err
 #MAKE_TDF=make_tdf
 SID=sid

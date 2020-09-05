@@ -4,12 +4,12 @@
  * and
  *	syntax.act
  * by:
- *	sid
+ *	/home/arty/dev/tendra/tendra/tdfc2/../sid/obj/src/sid
  */
 
 /* BEGINNING OF HEADER */
 
-#line 181 "syntax.act"
+#line 168 "syntax.act"
 
 
 
@@ -44,125 +44,125 @@ extern void parse_mem_type(TYPE *);
 extern void parse_operator(IDENTIFIER *);
 extern void parse_decl(TYPE, DECL_SPEC);
 #else /* __SID_SPLIT */
-extern void ZR889(EXP, EXP *);
 extern void ZRbase_Htype_Hspecifier(BASE_TYPE *);
+extern void ZR891(EXP, EXP *);
 extern void ZRdecl_Hspecifier_Hseq(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *);
-extern void ZR893(EXP, EXP *);
 extern void ZRdeclarator_Htail(IDENTIFIER, TYPE *);
 extern void ZRparameter_Hdeclaration(IDENTIFIER *);
-extern void ZR897(EXP, EXP *);
+extern void ZR895(EXP, EXP *);
 extern void ZRtarget_Hcondition(EXP *);
 extern void ZRclass_Hspecifier(TYPE *);
-extern void ZR1026(EXP *, EXP *);
+extern void ZR899(EXP, EXP *);
 extern void ZRfield_Hid_Hexpression(NAMESPACE, IDENTIFIER *);
 extern void ZRdecl_Hspecifier(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *);
 extern void parse_init(IDENTIFIER, EXP *);
-extern void ZR1027(EXP *, SID_LIST_EXP *);
 extern void ZRdeclaration_Hseq_Hopt(void);
-extern void ZR1028(EXP *);
-extern void ZR901(EXP, EXP *);
+extern void ZR1028(EXP *, EXP *);
 extern void ZRabstract_Hdeclarator_Htail(TYPE *);
-extern void ZR1029(BASE_TYPE *, IDENTIFIER *, TYPE *);
+extern void ZR1029(EXP *, SID_LIST_EXP *);
 extern void ZRscoped_Hstatement(EXP, EXP *);
-extern void ZR1030(BASE_TYPE *, TYPE *, CV_SPEC *);
+extern void ZR1030(EXP *);
+extern void ZR903(EXP, EXP *);
 extern void ZRinit_Hdeclarator(DECL_SPEC, BASE_TYPE, TYPE);
+extern void ZR1031(BASE_TYPE *, IDENTIFIER *, TYPE *);
 extern void ZRdeclaration(void);
-extern void ZR905(EXP, EXP *);
+extern void ZR1032(BASE_TYPE *, TYPE *, CV_SPEC *);
 extern void ZRprimary_Hexpression(EXP *);
 extern void ZRcontrol_Hstatement(EXP *);
+extern void ZR907(EXP, EXP *);
 extern void ZRclass_Hkey(BASE_TYPE *);
 extern void ZRinitialiser_Hlist(IDENTIFIER, SID_LIST_EXP *);
-extern void ZR909(EXP, EXP *);
 extern void parse_tok_type(TYPE *);
 extern void ZRequality_Hoperator(void);
 extern void ZRmaxmin_Hexpression(EXP *);
+extern void ZR911(EXP, EXP *);
 extern void ZRinset_Hflow_Hexpression(EXP *);
-extern void ZR913(EXP, EXP *);
 extern void parse_type_param(IDENTIFIER *);
 extern void ZRpostfix_Hexpression(EXP *);
 extern void ZRsimple_Hstatement(EXP *);
 extern void ZRmember_Hspecification_Hopt(void);
-extern void ZR1042(TYPE *, BASE_TYPE *, IDENTIFIER *);
+extern void ZR915(EXP, EXP *);
 extern void ZRsizeof_Hexpression(int, EXP *);
-extern void ZR917(EXP, EXP *);
-extern void ZR1045(TYPE *, IDENTIFIER *);
+extern void ZR1044(TYPE *, BASE_TYPE *, IDENTIFIER *);
+extern void ZR919(EXP, EXP *);
+extern void ZR1047(TYPE *, IDENTIFIER *);
 extern void ZRparameter_Hid_Htail(void);
-extern void ZR921(EXP, EXP *);
 extern void ZRparameter_Hdeclarator_Haux_Hopt(TYPE *, IDENTIFIER *);
+extern void ZR923(EXP, EXP *);
 extern void ZRasm_Hdefinition(EXP *);
 extern void ZRparameter_Hdeclarator_Hopt(TYPE, TYPE *, IDENTIFIER *);
 extern void ZRconditional_Hexpression(EXP *);
-extern void ZR925(EXP, EXP *);
 extern void parse_type(TYPE *);
 extern void ZRdesignator_Hlist(OFFSET, TYPE, OFFSET *, TYPE *);
-extern void ZR1054(IDENTIFIER *, TYPE *);
+extern void ZR927(EXP, EXP *);
 extern void ZRdeclaration_Hcond_Hhead(EXP *);
 extern void ZRenum_Hspecifier(TYPE *);
 extern void ZRdeclarator_Haux(TYPE *, IDENTIFIER *);
+extern void ZR1056(IDENTIFIER *, TYPE *);
 extern void ZRshift_Hexpression(EXP *);
 extern void ZRfor_Hcond_Hstatement(EXP *);
 extern void ZRenumerator_Hdefinition(IDENTIFIER);
 extern void ZRdeclarator(TYPE, TYPE *, IDENTIFIER *);
 extern void ZRinitialiser_Hopt(IDENTIFIER, EXP *);
 extern void parse_file(TYPE, DECL_SPEC);
-extern void ZR1058(TYPE *, TYPE *);
 extern void parse_offset(OFFSET, TYPE, OFFSET *, TYPE *);
-extern void ZR1059(TYPE *);
 extern void parse_nat(EXP *);
+extern void ZR1060(TYPE *, TYPE *);
 extern void ZRinitialiser_Hexpression(EXP *);
 extern void parse_param(TYPE, int, IDENTIFIER *);
+extern void ZR1061(TYPE *);
 extern void ZRtype_Hspecifier_Hseq(BASE_TYPE *, TYPE *, CV_SPEC *);
-extern void ZR936(EXP, EXP, int, EXP *, EXP *, int *);
 extern void parse_func(EXP *);
 extern void ZRabstract_Hdeclarator_Haux(TYPE *);
+extern void ZR938(EXP, EXP, int, EXP *, EXP *, int *);
 extern void ZRstorage_Hclass_Hspecifier(DECL_SPEC *);
 extern void ZRparameter_Hid_Hlist(void);
 extern void parse_id(IDENTIFIER *);
-extern void ZR686(IDENTIFIER *);
+extern void ZR687(IDENTIFIER *);
 extern void ZRcast_Hexpression(EXP *);
 extern void ZRtype_Hspecifier(BASE_TYPE *, TYPE *);
 extern void ZRabstract_Hdeclarator_Hopt(TYPE, TYPE *);
 extern void ZRopen_Hround_Hx(void);
-extern void ZR1070(int *, int *, int *, EXP *);
-extern void ZR816(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *);
 extern void ZRenumerator_Hlist(IDENTIFIER);
+extern void ZR1072(int *, int *, int *, EXP *);
+extern void ZR818(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *);
 extern void ZRfor_Hinit_Hstatement(EXP *);
 extern void ZRdesignator(OFFSET, TYPE, OFFSET *, TYPE *);
 extern void ZRunary_Hexpression(EXP *);
 extern void ZRrelational_Hexpression(EXP *);
 extern void ZRfor_Hend_Hstatement(EXP *);
-extern void ZR1075(IDENTIFIER *, SID_LIST_EXP *);
-extern void ZR948(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *, EXP *);
 extern void ZRand_Hexpression(EXP *);
-extern void ZR822(BASE_TYPE *, TYPE *, DECL_SPEC *, TYPE *, IDENTIFIER *);
 extern void parse_exp(EXP *);
 extern void ZRtype_Hqualifier(BASE_TYPE *, TYPE *, CV_SPEC *);
-extern void ZR1078(EXP *, EXP *);
-extern void ZR953(EXP *, EXP *);
+extern void ZR1077(IDENTIFIER *, SID_LIST_EXP *);
+extern void ZR950(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *, EXP *);
+extern void ZR824(BASE_TYPE *, TYPE *, DECL_SPEC *, TYPE *, IDENTIFIER *);
+extern void ZR1080(EXP *, EXP *);
 extern void parse_stmt(EXP *);
 extern void ZRmember_Hdeclarator_Hlist(TYPE, BASE_TYPE);
-extern void ZR1081(EXP *);
 extern void ZRtype_Hid(TYPE *, int *);
 extern void ZRflow_Hexpression(EXP *);
-extern void ZR1082(EXP *);
+extern void ZR955(EXP *, EXP *);
 extern void ZRdeclaration_Hcond_Hbody(void);
-extern void ZR702(BASE_TYPE *, TYPE *, CV_SPEC *, BASE_TYPE *, TYPE *, CV_SPEC *);
-extern void ZR1085(IDENTIFIER *, EXP *);
+extern void ZR1083(EXP *);
+extern void ZR1084(EXP *);
+extern void ZR703(BASE_TYPE *, TYPE *, CV_SPEC *, BASE_TYPE *, TYPE *, CV_SPEC *);
 extern void ZRexpression_Hlist(SID_LIST_EXP *);
-extern void ZR1086(IDENTIFIER *, EXP *);
+extern void ZR1087(IDENTIFIER *, EXP *);
 extern void ZRassignment_Hexpression(EXP *);
+extern void ZR1088(IDENTIFIER *, EXP *);
 extern void ZRexpression_Hlist_Hopt(SID_LIST_EXP *);
 extern void ZRlogical_Hand_Hexpression(EXP *);
 extern void ZRjump_Hstatement(EXP *);
 extern void ZRtarget_Hcondition_Hhead(EXP *, EXP *, int *);
 extern void ZRcv_Hqualifier_Hseq(CV_SPEC *);
 extern void ZRfunction_Hbody(EXP *);
-extern void ZR966(EXP *);
 extern void ZRcv_Hqualifier_Hseq_Hopt(CV_SPEC *);
-extern void ZR1096(EXP *, EXP *);
-extern void ZR1097(void);
+extern void ZR968(EXP *);
 extern void ZRfall_Hcheck(void);
 extern void ZRcv_Hqualifier(CV_SPEC *);
+extern void ZR1098(EXP *, EXP *);
+extern void ZR1099(void);
 extern void ZRunary_Hoperator(void);
 extern void ZRmember_Hdeclarator(TYPE, BASE_TYPE);
 extern void ZRinitialiser_Hclause(IDENTIFIER, EXP *);
@@ -172,21 +172,21 @@ extern void ZRselection_Hstatement(EXP *);
 extern void ZRexpression(EXP *);
 extern void ZRstatement_Hseq_Hopt(EXP, int, EXP *);
 extern void ZRscoped_Hstmt_Hbody(EXP, EXP *);
-extern void ZR727(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *, BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *);
 extern void ZRstatement(EXP *);
+extern void ZR728(BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *, BASE_TYPE *, TYPE *, CV_SPEC *, DECL_SPEC *);
 extern void ZRdirect_Habstract_Hdeclarator(TYPE *);
 extern void ZRiteration_Hstatement(EXP *);
-extern void ZR986(EXP *);
-extern void ZR859(TYPE, IDENTIFIER, TYPE *, IDENTIFIER *);
 extern void ZRassignment_Hoperator(void);
 extern void ZRexpression_Hstatement(EXP *);
 extern void ZRmember_Hdesignator(OFFSET, TYPE, OFFSET *, TYPE *);
+extern void ZR988(EXP *);
+extern void ZR861(TYPE, IDENTIFIER, TYPE *, IDENTIFIER *);
 extern void ZRdeclaration_Hcond(void);
-extern void ZR863(TYPE, TYPE *);
+extern void ZR865(TYPE, TYPE *);
 extern void parse_mem_type(TYPE *);
-extern void ZR871(TYPE, IDENTIFIER, TYPE *, IDENTIFIER *);
-extern void ZR618(EXP *);
 extern void parse_operator(IDENTIFIER *);
+extern void ZR873(TYPE, IDENTIFIER, TYPE *, IDENTIFIER *);
+extern void ZR619(EXP *);
 extern void ZRinclusive_Hor_Hexpression(EXP *);
 extern void ZRjump_Hlabel(EXP *);
 extern void ZRcomma_Hexpression_Htail(SID_LIST_EXP *);
@@ -194,23 +194,23 @@ extern void ZRparameter_Hdeclaration_Hlist(int *);
 extern void ZRliteral(EXP *);
 extern void ZRsecond_Hparameter_Hid(IDENTIFIER *);
 extern void parse_decl(TYPE, DECL_SPEC);
-extern void ZR877(EXP, EXP *);
+extern void ZR879(EXP, EXP *);
 extern void ZRexclusive_Hor_Hexpression(EXP *);
 extern void ZRcompound_Hstatement(EXP *);
 extern void ZRsemicolon_Hx(void);
 extern void ZRlogical_Hor_Hexpression(EXP *);
 extern void ZRconstant_Hexpression(EXP *);
-extern void ZR881(EXP, EXP *);
-extern void ZR627(SID_LIST_EXP *);
+extern void ZR754(int *);
+extern void ZR628(SID_LIST_EXP *);
 extern void ZRptr_Hoperator(TYPE *);
+extern void ZR883(EXP, EXP *);
 extern void ZRequality_Hexpression(EXP *);
 extern void ZRinit_Hdeclarator_Hlist(DECL_SPEC, BASE_TYPE, TYPE);
-extern void ZR885(EXP, EXP *);
-extern void ZR758(TYPE *);
-extern void ZR1014(EXP *, EXP *);
-extern void ZR760(EXP *);
+extern void ZR1013(EXP *, EXP *);
+extern void ZR759(TYPE *);
+extern void ZR887(EXP, EXP *);
 extern void ZRmultiplicative_Hexpression(EXP *);
-extern void ZR761(int *);
+extern void ZR761(EXP *);
 extern int ZI0;
 #endif /* __SID_SPLIT */
 
@@ -575,7 +575,7 @@ extern int ZI0;
 
 /* BEGINNING OF TRAILER */
 
-#line 1499 "syntax.act"
+#line 1486 "syntax.act"
 
 
 

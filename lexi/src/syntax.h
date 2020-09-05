@@ -4,12 +4,12 @@
  * and
  *	syntax.act
  * by:
- *	sid
+ *	/home/arty/dev/tendra/tendra/obj.antigone-regen/bin/sid
  */
 
 /* BEGINNING OF HEADER */
 
-#line 82 "syntax.act"
+#line 70 "syntax.act"
 
 
 	#ifndef SYNTAX_H
@@ -70,7 +70,7 @@ extern void read_lex(zoneP);
 
 /* BEGINNING OF TRAILER */
 
-#line 747 "syntax.act"
+#line 741 "syntax.act"
 
 
 	#endif

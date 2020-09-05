@@ -4,12 +4,12 @@
  * and
  *	syntax.act
  * by:
- *	sid
+ *	/home/arty/dev/tendra/tendra/obj.antigone-regen/bin/sid
  */
 
 /* BEGINNING OF HEADER */
 
-#line 152 "syntax.act"
+#line 135 "syntax.act"
 
 
 
@@ -23,7 +23,7 @@
 #ifndef SYNTAX_INCLUDED
 #define SYNTAX_INCLUDED
 
-#line 28 "syntax.h"
+#line 27 "syntax.h"
 
 /* BEGINNING OF FUNCTION DECLARATIONS */
 
@@ -60,9 +60,9 @@ extern void read_errors(void);
 
 /* BEGINNING OF TRAILER */
 
-#line 438 "syntax.act"
+#line 432 "syntax.act"
 
 #endif
-#line 68 "syntax.h"
+#line 67 "syntax.h"
 
 /* END OF FILE */

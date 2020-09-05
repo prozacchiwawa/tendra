@@ -525,6 +525,10 @@ complex-type : () -> ( t ) = @{
     MAKE_exp_location ( type_void, crt_loc, @a, @e ) ;
 @} ;
 
+<exp_designated_with_identifier> : ( id, a ) -> ( e ) = @{
+    MAKE_exp_designated_name( type_void, @id, @a, @e );
+@} ;
+
 <exp_log_and> : ( a, b ) -> ( e ) = @{
     @e = make_log_and_exp ( @a, @b ) ;
 @} ;
@@ -622,7 +626,6 @@ complex-type : () -> ( t ) = @{
 <exp_xor> : ( a, b ) -> ( e ) = @{
     @e = make_xor_exp ( @a, @b ) ;
 @} ;
-
 
 /*
     STATEMENT CONSTRUCTORS

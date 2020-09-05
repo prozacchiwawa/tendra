@@ -4,12 +4,12 @@
  * and
  *	syntax.act
  * by:
- *	sid
+ *	/home/arty/dev/tendra/tendra/obj.antigone-regen/bin/sid
  */
 
 /* BEGINNING OF HEADER */
 
-#line 137 "syntax.act"
+#line 117 "syntax.act"
 
 
 
@@ -25,7 +25,7 @@
 
 	typedef object *SID_COMMAND;
 
-#line 30 "syntax.h"
+#line 29 "syntax.h"
 
 /* BEGINNING OF FUNCTION DECLARATIONS */
 
@@ -112,11 +112,11 @@ extern void read_spec(SID_COMMAND *);
 
 /* BEGINNING OF TRAILER */
 
-#line 845 "syntax.act"
+#line 836 "syntax.act"
 
 
 	#endif
 
-#line 122 "syntax.h"
+#line 121 "syntax.h"
 
 /* END OF FILE */

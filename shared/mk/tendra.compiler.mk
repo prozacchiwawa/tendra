@@ -89,7 +89,7 @@ GCCOPTS?=	-std=c89
 GXXOPTS?=	-std=c++98
 
 #CPP:=		${GCC} -E
-CC:=		${GCC}
+CC:=		${GCC} -g
 CXX:=		${GCC}
 
 #CPPFLAGS+=	${GPPOPTS}
@@ -147,9 +147,9 @@ CC:=	${TINYCC}
 
 CC?=		cc
 CXX?=		c++
-CFLAGS+=
-CXXFLAGS+=
-CCOPTS+=
+CFLAGS+=-g
+CXXFLAGS+=-g
+CCOPTS+=-g
 
 . endif
 

@@ -4,13 +4,12 @@
  * and
  *	syntax.act
  * by:
- *	sid
+ *	/home/arty/dev/tendra/tendra/obj.antigone-regen/bin/sid
  */
 
 /* BEGINNING OF HEADER */
 
-#line 128 "syntax.act"
-
+#line 110 "syntax.act"
 
 
 	/*
@@ -23,7 +22,7 @@
 	#ifndef SYNTAX_INCLUDED
 	#define SYNTAX_INCLUDED
 
-#line 28 "syntax.h"
+#line 26 "syntax.h"
 
 /* BEGINNING OF FUNCTION DECLARATIONS */
 
@@ -77,11 +76,11 @@ extern void read_calculus(void);
 
 /* BEGINNING OF TRAILER */
 
-#line 904 "syntax.act"
+#line 894 "syntax.act"
 
 
 	#endif
 
-#line 87 "syntax.h"
+#line 85 "syntax.h"
 
 /* END OF FILE */

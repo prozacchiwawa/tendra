@@ -1408,6 +1408,9 @@ get_aggr_elem(LIST(EXP) p, unsigned *ptag)
 	return a;
 }
 
+void free_initializer_list(LIST(EXP) *p) {
+  DESTROY_list(p, SIZE_exp);
+}
 
 /*
     This routine checks the aggregate initialiser expression list pointed
@@ -1550,6 +1553,7 @@ init_aggr_aux(TYPE t, CV_SPEC cv, LIST(EXP) *r, int start, IDENTIFIER id,
 		LIST(GRAPH) br = DEREF_list(graph_tails(gr));
 		BUFFER *bf = &field_buff;
 		unsigned boff = (unsigned)(bf->posn - bf->start);
+    LIST(EXP) *q = p;
 
 		/* Check for non-aggregate classes */
 		ci = DEREF_cinfo(ctype_info(ct));
@@ -1576,8 +1580,11 @@ init_aggr_aux(TYPE t, CV_SPEC cv, LIST(EXP) *r, int start, IDENTIFIER id,
 			cerr = NULL_err;
 		}
 
+    /* Convert any designated initializers to C89 sequential */
+    p = downgrade_designated_initializers(t, br, p);
+
 		/* Check for non-aggregate initialisations */
-		if (!IS_NULL_list(p)) {
+		} else if (!IS_NULL_list(p)) {
 			unsigned rank;
 			CONVERSION conv;
 			unsigned et = null_tag;
@@ -1858,6 +1865,11 @@ non_aggregate_lab:
 		p = NULL_list(EXP);
 	}
 	*r = p;
+
+  if (q != p) {
+    free_initializer_list(q);
+  }
+
 	return e;
 }
 

@@ -309,6 +309,7 @@ literal : () -> ( e : EXP ) = {
 <exp_paren_begin> : () -> () ;
 <exp_paren_end> : ( :EXP ) -> ( :EXP ) ;
 <exp_identifier> : ( :IDENTIFIER ) -> ( :EXP ) ;
+<exp_designated_with_identifier> : ( :IDENTIFIER, :EXP ) -> ( :EXP ) ;
 
 expression : () -> ( :EXP ) ;
 
@@ -2260,8 +2261,7 @@ type-id-entry : () -> ( t : TYPE ) = {
 initialiser-clause : ( :DECL ) -> ( :EXP ) ;
 
 initialiser-list : ( d : DECL ) -> ( p : LIST-EXP ) = {
-	b = initialiser-clause ( d ) ;
-	a = <exp_location> ( b ) ;
+	a = initialiser-clause ( d ) ;
 	{
 		comma ; q = initialiser-list ( d ) ;
 	    ||	comma ; q = <list_exp_null> ;
@@ -2271,7 +2271,15 @@ initialiser-list : ( d : DECL ) -> ( p : LIST-EXP ) = {
 } ;
 
 initialiser-clause : ( d : DECL ) -> ( e : EXP ) = {
-	e = initialiser-expression ;
+  e = initialiser-expression ;
+    ||
+    {
+      dot ;
+      id = identifier ;
+      assign ;
+      a = initialiser-clause ( d );
+	    e = <exp_designated_with_identifier> ( id, a ) ;
+    } ;
     ||
 	open-brace ;
 	{

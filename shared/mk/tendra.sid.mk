@@ -24,12 +24,13 @@ SIDSPLIT?=	@
 . endif
 .endif
 
+SID=${BASE_DIR}/../sid/obj/src/sid
 
 # TODO: really sid ought to delete its own output on error.
 .for src in ${SYNTAX}
-${src:R}${SIDSPLIT}.c ${src:R}.h: ${src} ${ACTIONS:M${src:R}.act}
+${src:R}${SIDSPLIT}.c ${src:R}.h: ${src} ${SYNTAX} ${ACTIONS:M${src:R}.act}
 	@${ECHO} "==> Translating ${WRKDIR}/${src}"
-	${SID} ${SIDOPTS} ${.ALLSRC} ${src:R}${SIDSPLIT}.c ${src:R}.h \
+	${SID} ${SIDOPTS} ${src} ${ACTIONS:M${src:R}.act} ${src:R}${SIDSPLIT}.c ${src:R}.h \
 		|| ( ${RMFILE} ${src:R}${SIDSPLIT:S/@/*/}.c ${src:R}.h; ${EXIT} 1 )
 .endfor
 

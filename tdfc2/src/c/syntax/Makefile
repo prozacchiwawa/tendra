@@ -22,4 +22,3 @@ SIDOPTS+=	-s split=5000
 SYNTAX+=	syntax.sid
 
 .include <tendra.sid.mk>
-

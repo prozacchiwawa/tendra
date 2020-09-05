@@ -11,6 +11,7 @@ SUBDIR+=	tdf
 SUBDIR+=	c89-hosted
 SUBDIR+=	c89-common
 SUBDIR+=	c89-library
+SUBDIR+=  c99
 .endif
 
 .if !defined(NOTESTS)

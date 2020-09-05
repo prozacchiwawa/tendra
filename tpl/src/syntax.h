@@ -4,13 +4,12 @@
  * and
  *	syntax.act
  * by:
- *	sid
+ *	/home/arty/dev/tendra/tendra/obj.antigone-regen/bin/sid
  */
 
 /* BEGINNING OF HEADER */
 
-#line 195 "syntax.act"
-
+#line 171 "syntax.act"
 
 
 /*
@@ -27,7 +26,8 @@ extern int do_pp;
 extern int search_for_toks;
 extern unsigned long MAJOR_NO;
 extern unsigned long MINOR_NO;
-#line 32 "syntax.h"
+
+#line 31 "syntax.h"
 
 /* BEGINNING OF FUNCTION DECLARATIONS */
 
@@ -191,9 +191,9 @@ extern void read_program(void);
 
 /* BEGINNING OF TRAILER */
 
-#line 2414 "syntax.act"
+#line 2405 "syntax.act"
 
 #endif
-#line 199 "syntax.h"
+#line 198 "syntax.h"
 
 /* END OF FILE */

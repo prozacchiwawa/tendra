@@ -1,4 +1,11 @@
 /*
+ * Copyright 2011, The TenDRA Project.
+ * Copyright 1997, United Kingdom Secretary of State for Defence.
+ *
+ * See doc/copyright/ for the full copyright terms.
+ */
+
+/*
     AUTOMATICALLY GENERATED FROM ALGEBRA disk (VERSION 1.1)
     BY calculus (VERSION 1.3)
 */
@@ -6,8 +13,7 @@
 #ifndef READ_DEF_H_INCLUDED
 #define READ_DEF_H_INCLUDED
 
-#include <out/disk.h>
-
+#include "disk.h"
 #include "type_ops.h"
 
 /* Disk reading function declarations */

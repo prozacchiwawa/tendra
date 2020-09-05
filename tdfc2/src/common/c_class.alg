@@ -1320,6 +1320,11 @@ union EXP (exp) = {
 	IDENTIFIER tok ;
 	LIST TOKEN args ;
     },
+  designated_name -> {
+    /* Designated struct or union Initializer */
+    IDENTIFIER member_name;
+    EXP member_initialiser;
+  },
     dummy -> {
 	/* Dummy expression */
 	EXP value ;

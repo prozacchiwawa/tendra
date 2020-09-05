@@ -116,9 +116,10 @@ bootstrap: ${BOOTSTRAP_DEPS}
 	mkdir -p "${OBJ_BPREFIX}/lib/tcc/sys/libc"
 	@echo "===> copying builtin libc to ${OBJ_BPREFIX}/lib/tcc/sys/libc/musl-1.1.5"
 	cp -r ${.CURDIR}/osdep/libc/musl-1.1.5 "${OBJ_BPREFIX}/lib/tcc/sys/libc"
-	ln -s \
+	(ln -s \
 		"${OBJ_BPREFIX}/lib/tcc/sys/libc/musl-1.1.5/usr/lib/libc.so" \
-		"${OBJ_BPREFIX}/lib/tcc/sys/libc/musl-1.1.5/usr/lib/ld-musl-i386.so.1"
+		"${OBJ_BPREFIX}/lib/tcc/sys/libc/musl-1.1.5/usr/lib/ld-musl-i386.so.1" || exit 0 \
+  )
 .endif
 
 	@echo "===> bootstrapping tcc into ${OBJ_BPREFIX}"

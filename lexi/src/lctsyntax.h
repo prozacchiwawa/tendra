@@ -4,12 +4,12 @@
  * and
  *	lctsyntax.act
  * by:
- *	sid
+ *	/home/arty/dev/tendra/tendra/obj.antigone-regen/bin/sid
  */
 
 /* BEGINNING OF HEADER */
 
-#line 106 "lctsyntax.act"
+#line 69 "lctsyntax.act"
 
 
 	#ifndef LCT_SYNTAX_H
@@ -79,7 +79,7 @@ extern void read_lct_unit(void);
 
 /* BEGINNING OF TRAILER */
 
-#line 341 "lctsyntax.act"
+#line 335 "lctsyntax.act"
 
 
 	#endif

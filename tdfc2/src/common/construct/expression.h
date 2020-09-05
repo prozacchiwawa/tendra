@@ -40,6 +40,7 @@ extern EXP make_rem_exp(EXP, EXP);
 extern EXP make_shift_exp(int, EXP, EXP);
 extern EXP make_uminus_exp(int, EXP);
 extern EXP make_xor_exp(EXP, EXP);
+extern EXP make_designator_exp(IDENTIFIER, EXP);
 extern EXP join_exp(EXP, EXP);
 
 extern OFFSET make_off_mult(TYPE, EXP, int);
