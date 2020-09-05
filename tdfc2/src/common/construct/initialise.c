@@ -1408,9 +1408,6 @@ get_aggr_elem(LIST(EXP) p, unsigned *ptag)
 	return a;
 }
 
-#define TRUE 1
-#define FALSE 0
-
 typedef enum _IteratorStage_t {
   IS_Unstarted,
   IS_Array,
@@ -1488,9 +1485,9 @@ int field_iterator_next_member(FieldIterator_t *sf_iter) {
     sf_iter->mem = DEREF_member(member_next(sf_iter->mem));
     sf_iter->mem = next_data_member(sf_iter->mem, 0);
 
-    return TRUE;
+    return BOOL_TRUE;
   } else {
-    return FALSE;
+    return BOOL_FALSE;
   }
 }
 
@@ -1510,7 +1507,7 @@ int field_iterator_next_base(FieldIterator_t *sf_iter) {
       IGNORE print_hashid(sf_iter->snm, 1, 0, &sf_iter->bf, 0);
     }
     sf_iter->br = TAIL_list(sf_iter->br);
-    return TRUE;
+    return BOOL_TRUE;
   } else {
     sf_iter->stage = IS_AggregateMembers;
 		sf_iter->ns = DEREF_nspace(ctype_member(sf_iter->ct));
@@ -1538,7 +1535,7 @@ int field_iterator_next(FieldIterator_t *sf_iter) {
       sf_iter->m = get_nat_value(sf_iter->n);
 
       if (sf_iter->c >= sf_iter->m) {
-        return FALSE;
+        return BOOL_FALSE;
       }
 
       sf_iter->stage = IS_Array;
@@ -1564,12 +1561,12 @@ int field_iterator_next(FieldIterator_t *sf_iter) {
     }
 
     if (sf_iter->c >= sf_iter->m) {
-      return FALSE;
+      return BOOL_FALSE;
     }
 
     /* Build up the field name */
     bfprintf(&sf_iter->bf, "[%lu]", sf_iter->c);
-    return TRUE;
+    return BOOL_TRUE;
 
   case IS_AggregateBase:
     {
@@ -1581,7 +1578,7 @@ int field_iterator_next(FieldIterator_t *sf_iter) {
 
       int result = field_iterator_next_base(sf_iter);
       if (result) {
-        return TRUE;
+        return BOOL_TRUE;
       } else {
         sf_iter->stage = IS_AggregateMembers;
 
