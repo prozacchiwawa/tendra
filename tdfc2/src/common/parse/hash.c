@@ -159,7 +159,6 @@ hash_type(TYPE t)
 	return h % HASH_TYPE_SIZE;
 }
 
-
 /*
     This routine initialises the hash table entry nm by creating a dummy
     identifier with lexical token value tok for it to point to.
@@ -176,17 +175,8 @@ init_hashid(HASHID nm, int tok)
 	return;
 }
 
-
-/*
-    This routine looks up the identifier name s in the hash table, creating
-    it if it does not already exist.  h gives the value of hash ( s ) (which
-    gets checked by an assertion).  The argument tok is set to lex_unknown to
-    indicate that the identifier has just been read by read_token, otherwise
-    it gives the underlying default lexical token.
-*/
-
-HASHID
-lookup_name(string s, unsigned long h, int ext, int tok)
+int
+lookup_insert_name_in_table(HASHID *hash_table, unsigned long hash_size, string s, unsigned long h, int ext, int tok, int do_insert, HASHID *entry)
 {
 	unsigned tag;
 	unsigned long len;
@@ -200,7 +190,8 @@ lookup_name(string s, unsigned long h, int ext, int tok)
 		int c = ustrcmp(t, s);
 		if (c == 0) {
 			/* Name matches */
-			return nm;
+			*entry = nm;
+      return BOOL_TRUE;
 		}
 		if (c > 0) {
 			break;
@@ -208,6 +199,10 @@ lookup_name(string s, unsigned long h, int ext, int tok)
 		prev = nm;
 		nm = DEREF_hashid(hashid_next(nm));
 	}
+
+  if (!do_insert) {
+    return BOOL_FALSE;
+  }
 
 	/* Create new hash table entry */
 	len = (unsigned long)ustrlen(s);
@@ -242,7 +237,25 @@ lookup_name(string s, unsigned long h, int ext, int tok)
 		/* Check name length */
 		IGNORE check_value(OPT_VAL_name_limit, len, nm);
 	}
-	return nm;
+
+  *entry = nm;
+  return BOOL_TRUE;
+}
+
+/*
+    This routine looks up the identifier name s in the hash table, creating
+    it if it does not already exist.  h gives the value of hash ( s ) (which
+    gets checked by an assertion).  The argument tok is set to lex_unknown to
+    indicate that the identifier has just been read by read_token, otherwise
+    it gives the underlying default lexical token.
+*/
+
+HASHID
+lookup_name(string s, unsigned long h, int ext, int tok)
+{
+  HASHID result;
+  IGNORE lookup_insert_name_in_table(hash_table, HASH_SIZE, h, ext, tok, BOOL_TRUE, &result);
+  return result;
 }
 
 
@@ -570,10 +583,23 @@ prime_name(IDENTIFIER id)
 HASHID hash_keyword[LAST_KEYWORD - FIRST_KEYWORD + 1];
 IDENTIFIER underlying_op = NULL_id;
 
+void
+init_hash_for_table(HASHID **_hash_table, unsigned long hash_size)
+{
+	unsigned long i;
+
+	/* Set up identifier hash table */
+	hash_table = xmalloc_nof(HASHID, HASH_SIZE);
+  *_hash_table = hash_table;
+
+	for (i = 0; i < HASH_SIZE; i++) {
+		hash_table[i] = NULL_hashid;
+	}
+}
 
 /*
-    This routine allocates space for the hash table and sets all its entries
-    to NULL.  It also sets up the operator look-up table.
+  This routine allocates space for the hash table and sets all its entries
+  to NULL.  It also sets up the operator look-up table.
 */
 
 void
@@ -582,11 +608,7 @@ init_hash(void)
 	int n;
 	unsigned long i;
 
-	/* Set up identifier hash table */
-	hash_table = xmalloc_nof(HASHID, HASH_SIZE);
-	for (i = 0; i < HASH_SIZE; i++) {
-		hash_table[i] = NULL_hashid;
-	}
+  init_hash_for_table(&hash_table, HASH_SIZE);
 
 	/* Set up type hash table */
 	hash_type_table = xmalloc_nof(HASHID, HASH_TYPE_SIZE);
@@ -635,4 +657,24 @@ init_hash(void)
 	/* This is necessary for the definition of KEYWORD */
 	assert(FIRST_KEYWORD == lex_auto);
 	return;
+}
+
+/*
+  This routine frees space used by a bespoke hash table.
+*/
+void
+free_hash_table(HASHID *hash_table, unsigned long hash_size)
+{
+	unsigned long i;
+
+	for (i = 0; i < HASH_SIZE; i++) {
+    while (!IS_NULL_hashid(hash_table[i])) {
+      string t = DEREF_string(hashid_name_etc_text(nm));
+      DESTROY_string(t);
+      prev = nm;
+      nm = DEREF_hashid(hashid_next(nm));
+    }
+	}
+
+  xfree(hash_table);
 }

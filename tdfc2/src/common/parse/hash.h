@@ -71,4 +71,21 @@ extern HASHID *hash_table;
 #define EQ_KEYWORD(N, T)	EQ_hashid((N), KEYWORD(T))
 
 
+/*
+    Functions that allow use of bespose hash tables in other code.
+
+    lookup_insert_name_in_table looks up and optionally inserts a new
+    entry in the hash table depending on whether do_insert is true.
+
+    If the lookup was successful, the HASHID pointed to by entry is
+    set to the element found.
+*/
+
+int
+lookup_insert_name_in_table(HASHID *hash_table, unsigned long hash_size, string s, unsigned long h, int ext, int tok, int do_insert, HASHID *entry);
+void
+init_hash_for_table(HASHID **hash_table, unsigned long hash_size);
+void
+free_hash_table(HASHID *hash_table, unsigned long hash_size);
+
 #endif

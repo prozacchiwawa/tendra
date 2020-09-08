@@ -2201,7 +2201,7 @@ enc_exp(BITSTREAM *bs, EXP e)
 
 	/* Examine expression cases */
 	t = DEREF_type(exp_type(e));
-	assert(ORDER_exp == 88);
+	assert(ORDER_exp == 89);
 	switch (TAG_exp(e)) {
 
 	case exp_identifier_tag: {
@@ -2919,6 +2919,7 @@ binary_label: {
 	case exp_op_tag:
 	case exp_opn_tag:
 	case exp_uncompiled_tag:
+  case exp_designated_name_tag:
 	default: {
 		/* Illegal expressions */
 		ENC_make_top(bs);

@@ -1379,9 +1379,13 @@ init_direct(TYPE t, EXP a, ERROR *err)
 */
 
 static EXP
-get_aggr_elem(LIST(EXP) p, unsigned *ptag)
+get_aggr_elem(LIST(EXP) p, LIST(EXP) *member_initialiser, unsigned *ptag)
 {
+	BUFFER buf = { 0 };
 	EXP a = DEREF_exp(HEAD_list(p));
+
+	buf.posn = extend_buffer(&buf, buf.posn);
+
 	if (!IS_NULL_exp(a)) {
 		if (IS_exp_location(a)) {
 			TYPE t;
@@ -1399,27 +1403,33 @@ get_aggr_elem(LIST(EXP) p, unsigned *ptag)
 			*ptag = tag;
 		}
 	}
+
+	free_buffer(&buf);
+
 	return a;
 }
 
 /*
-    This routine checks the aggregate initialiser expression list pointed
-    to by r against the type t.  The argument start is 1 to indicate the
-    presence of a open brace immediately preceding r and 2 to indicate
-    the top-level aggregate.  The result is a structured aggregate
-    initialiser expression for compound types t or a suitably converted
-    initialiser expression.
+	This routine checks the aggregate initialiser expression list pointed
+	to by r against the type t.  The argument start is 1 to indicate the
+	presence of a open brace immediately preceding r and 2 to indicate
+	the top-level aggregate.  The result is a structured aggregate
+	initialiser expression for compound types t or a suitably converted
+	initialiser expression.
+
+	If limit is BOOL_TRUE, then do not emit padding.
 */
 
 static EXP
-init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int start, IDENTIFIER id,
-	      ERROR *err)
+init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int start, int limit, IDENTIFIER id,
+							ERROR *err)
 {
 	EXP e;
 	LIST(EXP) p = *r;
 	ERROR cerr = NULL_err;
 	CLASS_INFO ci = cinfo_none;
 	int tag = TAG_type(t);
+	LIST(EXP) designated_exp_list = NULL_list(EXP);
 
 	switch (tag) {
 	case type_array_tag: {
@@ -1442,7 +1452,7 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 		/* Check for string literals in braces */
 		if (start && !IS_NULL_list(p)) {
 			unsigned et = null_tag;
-			e = get_aggr_elem(p, &et);
+			e = get_aggr_elem(p, &designated_exp_list, &et);
 			if (et == exp_string_lit_tag && is_char_array(t)) {
 				e = init_array(t, cv, e, 0, err);
 				p = TAIL_list(p);
@@ -1457,7 +1467,7 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 			unsigned et = null_tag;
 
 			/* Check first element of aggregate */
-			e = get_aggr_elem(p, &et);
+			e = get_aggr_elem(p, &designated_exp_list, &et);
 			if (IS_NULL_exp(e)) {
 				/* Can occur in template initialisers */
 				e = init_empty(s, cv_none, 1, &serr);
@@ -1562,7 +1572,7 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 			unsigned rank;
 			CONVERSION conv;
 			unsigned et = null_tag;
-			e = get_aggr_elem(p, &et);
+			e = get_aggr_elem(p, &designated_exp_list, &et);
 			conv.from = DEREF_type(exp_type(e));
 			conv.to = t;
 			rank = std_convert_seq(&conv, e, 0, 0);
@@ -1587,7 +1597,7 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 			/* Check next initialiser */
 			if (!IS_NULL_list(p)) {
 				unsigned et = null_tag;
-				e = get_aggr_elem(p, &et);
+				e = get_aggr_elem(p, &designated_exp_list, &et);
 				if (et == exp_string_lit_tag && is_char_array(s)) {
 					/* Check for string literals */
 					e = init_array(s, local_cv, e, 0, &serr);
@@ -1661,7 +1671,7 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 		} else {
 			/* The first element must be a scalar */
 			unsigned et = null_tag;
-			e = get_aggr_elem(p, &et);
+			e = get_aggr_elem(p, &designated_exp_list, &et);
 			if (et == exp_aggregate_tag) {
 				LIST(EXP)q;
 				q = DEREF_list(exp_aggregate_args(e));
@@ -1718,7 +1728,7 @@ non_aggregate_lab:
 			   LIST(EXP) q = p;
 			   while (!IS_NULL_list(q)) {
 				   unsigned et = null_tag;
-				   IGNORE get_aggr_elem(q, &et);
+				   IGNORE get_aggr_elem(q, &designated_exp_list, &et);
 				   q = TAIL_list(q);
 			   }
 			   e = init_constr(t, p, err);
@@ -1735,7 +1745,7 @@ non_aggregate_lab:
 	   } else {
 		   /* Get next initialiser from list */
 		   unsigned et = null_tag;
-		   e = get_aggr_elem(p, &et);
+		   e = get_aggr_elem(p, &designated_exp_list, &et);
 		   if (et == exp_aggregate_tag) {
 			   LIST(EXP) q;
 			   q = DEREF_list(exp_aggregate_args(e));
@@ -1773,6 +1783,117 @@ non_aggregate_lab:
 	return e;
 }
 
+/*
+	 C99, 6.7.8, constraint 19 specifies that designated initialisers are
+	 processed in order, and that each one overrides any previous initialisation
+	 provided for an earlier mention of any specific subobject, so the following:
+
+	 struct Foo { int x; const char *y; };
+
+	 struct Foo bar[3] = { { .y = "hi there" }, { .y = "test" }, [0].x = 3 };
+
+	 Causes bar[0] to be initialised to { .x = 3 } instead of { .y = "hi there" }
+
+	 This struct handles one of two possibilities per tree node:
+
+	 1) A single EXP, most likely a quoted string or aggregate initialiser is
+	    specified for this node.
+
+	 2) Somewhere inside this node, the elements in iio_refs apply to this
+	    node's initialisation.
+*/
+typedef struct _InitialisersInOrder_t {
+				int series_offset;
+				EXP iio_self;
+				int iio_cap, iio_len;
+				struct _InitialisersInOrder_t *iio_refs;
+} InitialisersInOrder_t;
+
+/*
+	  This routine checks the aggregate initialiser expression list pointed
+	  to by r against the type t.  The argument start is 1 to indicate the
+	  presence of a open brace immediately preceding r and 2 to indicate
+	  the top-level aggregate.  The result is a structured aggregate
+	  initialiser expression for compound types t or a suitably converted
+	  initialiser expression.
+
+		Its interface mirrors init_aggr_aux, but it processes a list containing
+		designated initialisers, which need to be collected.
+*/
+
+static EXP
+init_aggr_designated(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int start, IDENTIFIER id,
+										 ERROR *err)
+{
+				HASHID *designated_init_paths;
+				BUFFER sort_iter_buf = { 0 };
+				BUFFER init_buf = { 0 };
+				FieldIterator_t sort_iter = { &sort_iter_buf };
+				InitialisersInOrder_t designated_inits = { 0 };
+				LIST(EXP) p = *r;
+
+				init_hash_for_table(&designated_init_paths, HASH_SIZE);
+
+				sort_iter_buf.posn = extend_buffer(&sort_iter_buf, sort_iter_buf.posn);
+				init_buf.posn = extend_buffer(&init_buf, init_buf.posn);
+
+				field_iterator_init(&sort_iter, t, cv_none);
+
+				/* Fully iterate with sort_iter, inserting or replacing each value
+				   in the hash table as we observe it.
+
+					 This is a radix-like sort.  In the first pass, we copy every item
+					 we have into the list, then for each matching string prefix in
+					 the field iterator into designated_inits, we set pivot_low and
+					 pivot_high, move the match into the next position at pivot_high.
+
+					 At that point, we can descend one recursion level, sorting over
+					 pivot_low to pivot_high.
+				*/
+
+				/* Do initial copy */
+
+				while (!IS_NULL_list(p)) {
+								EXP e = DEREF_exp(HEAD_list(p));
+								iio_realloc_copy_in(&designated_inits, e);
+				}
+
+				while (field_iter_next(&sort_iter)) {
+								int i;
+								for (i = 0; i < 
+				}
+
+				iio_free(&designated_inits);
+				field_iterator_free(&sort_iter);
+				free_buffer(&sort_iter_buf);
+				free_buffer(&init_buf);
+}
+
+/*
+	  Determine whether we've got designated initialisers to deal with as
+		these won't allow strictly linear handling.
+
+		This traverses the list.
+*/
+
+static int
+detect_designated_initialiser(LIST(EXP) p) {
+				while (!IS_NULL_list(p)) {
+								EXP a = DEREF_exp(HEAD_list(p));
+								unsigned tag = TAG_exp(a);
+								if (tag == exp_designated_name_tag) {
+												return BOOL_TRUE;
+								} else if (tag == exp_aggregate_tag) {
+												LIST(EXP) q;
+												q = DEREF_list(exp_aggregate_args(a), &subexps);
+												if (detect_designated_initialiser(q)) {
+																return BOOL_TRUE;
+												}
+								}
+								p = TAIL_list(p);
+				}
+				return BOOL_FALSE;
+}
 
 /*
     This is the top-level routine for analysing the aggregate initialiser
@@ -1796,7 +1917,13 @@ init_aggregate(TYPE t, EXP e, IDENTIFIER id, ERROR *err)
 	bad_crt_loc++;
 	loc = crt_loc;
 	field_iterator_init(&sf_iter, t, cv_none);
-	e = init_aggr_aux(&sf_iter, t, cv_none, &args, 2, id, err);
+	/* If We've got one or more designated initialisers, and the feature is reqested,
+	 * then do designated initialisation. */
+	if (detect_designated_initialiser(args)) {
+		e = init_aggr_designated(&sf_iter, t, cv_none, &args, 2, id, err);
+	} else {
+		e = init_aggr_aux(&sf_iter, t, cv_none, &args, 2, id, err);
+	}
 	field_iterator_free(&sf_iter);
 	free_buffer(&field_buffer);
 	crt_loc = loc;

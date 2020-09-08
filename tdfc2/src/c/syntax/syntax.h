@@ -575,7 +575,7 @@ extern int ZI0;
 
 /* BEGINNING OF TRAILER */
 
-#line 1486 "syntax.act"
+#line 1494 "syntax.act"
 
 
 
