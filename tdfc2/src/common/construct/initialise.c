@@ -1421,14 +1421,14 @@ get_aggr_elem(LIST(EXP) p, LIST(EXP) *member_initialiser, unsigned *ptag)
 */
 
 static EXP
-init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int start, int limit, IDENTIFIER id,
+init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int start, LIST(EXP) limit, IDENTIFIER id,
 							ERROR *err)
 {
 	EXP e;
 	LIST(EXP) p = *r;
 	ERROR cerr = NULL_err;
 	CLASS_INFO ci = cinfo_none;
-	int tag = TAG_type(t);
+	unsigned tag = TAG_type(t);
 	LIST(EXP) designated_exp_list = NULL_list(EXP);
 
 	switch (tag) {
@@ -1482,13 +1482,13 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 				LIST(EXP) q;
 				q = DEREF_list(exp_aggregate_args(e));
 				field_iterator_push(sf_iter, s, cv);
-				e = init_aggr_aux(sf_iter, s, cv, &q, 1, id, &serr);
+				e = init_aggr_aux(sf_iter, s, cv, &q, 1, id, limit, &serr);
 				field_iterator_pop(sf_iter);
 				p = TAIL_list(p);
 			} else {
 				/* Otherwise read constituents from p */
 				field_iterator_push(sf_iter, s, cv);
-				e = init_aggr_aux(sf_iter, s, cv, &p, 0, id, &serr);
+				e = init_aggr_aux(sf_iter, s, cv, &p, 0, id, limit, &serr);
 				field_iterator_pop(sf_iter);
 			}
 
@@ -1529,7 +1529,7 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 		TYPE s = DEREF_type(type_ref_sub(t));
 		e = init_ref_rvalue(s, NULL_exp, err);
 		if (IS_NULL_exp(e)) {
-			e = init_aggr_aux(sf_iter, s, cv, r, start, id, err);
+			e = init_aggr_aux(sf_iter, s, cv, r, start, limit, id, err);
 			e = make_temporary(s, e, NULL_exp, 1, err);
 			e = make_ref_init(t, e);
 		}
@@ -1607,14 +1607,14 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 					LIST(EXP) q;
 					q = DEREF_list(exp_aggregate_args(e));
 					field_iterator_push(sf_iter, s, cv);
-					e = init_aggr_aux(sf_iter, s, local_cv, &q, 1, id,
+					e = init_aggr_aux(sf_iter, s, local_cv, &q, 1, limit, id,
 								&serr);
 					field_iterator_pop(sf_iter);
 					p = TAIL_list(p);
 				} else {
 					/* Otherwise read constituents from p */
 					field_iterator_push(sf_iter, s, cv);
-					e = init_aggr_aux(sf_iter, s, local_cv, &p, 0, id,
+					e = init_aggr_aux(sf_iter, s, local_cv, &p, 0, limit, id,
 								&serr);
 					field_iterator_pop(sf_iter);
 				}
@@ -1675,7 +1675,7 @@ init_aggr_aux(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r, int st
 			if (et == exp_aggregate_tag) {
 				LIST(EXP)q;
 				q = DEREF_list(exp_aggregate_args(e));
-				e = init_aggr_aux(sf_iter, t, cv, &q, 1, id, err);
+				e = init_aggr_aux(sf_iter, t, cv, &q, 1, limit, id, err);
 			} else {
 				ERROR ferr = NULL_err;
 				if (start == 1) {
@@ -1702,7 +1702,7 @@ token_lab: {
 			   goto non_aggregate_lab;
 		   }
 		   field_iterator_push(sf_iter, s, cv);
-		   e = init_aggr_aux(sf_iter, s, cv, r, start, id, err);
+		   e = init_aggr_aux(sf_iter, s, cv, r, start, limit, id, err);
 		   field_iterator_pop(sf_iter);
 		   return e;
 	   }
@@ -1749,7 +1749,7 @@ non_aggregate_lab:
 		   if (et == exp_aggregate_tag) {
 			   LIST(EXP) q;
 			   q = DEREF_list(exp_aggregate_args(e));
-			   e = init_aggr_aux(sf_iter, t, cv, &q, 1, id, err);
+			   e = init_aggr_aux(sf_iter, t, cv, &q, 1, limit, id, err);
 		   } else {
 			   e = convert_reference(e, REF_ASSIGN);
 			   if (tag == type_token_tag && is_zero_exp(e)) {
@@ -1803,11 +1803,21 @@ non_aggregate_lab:
 	    node's initialisation.
 */
 typedef struct _InitialisersInOrder_t {
-				int series_offset;
-				EXP iio_self;
 				int iio_cap, iio_len;
-				struct _InitialisersInOrder_t *iio_refs;
+				LIST(EXP) *iio_refs;
 } InitialisersInOrder_t;
+
+static void
+iio_realloc_copy_in(InitialisersInOrder_t *designated_inits, LIST(EXP) e);
+
+static void
+iio_free(InitialisersInOrder_t *designated_inits);
+
+static int
+designator_prefix_match(const char *, LIST(EXP) init_exps);
+
+static void
+designated_recurse_sort(FieldIterator_t *sort_iter, InitialisersInOrder_t *designated_inits, int partition_start, int swap_at);
 
 /*
 	  This routine checks the aggregate initialiser expression list pointed
@@ -1830,6 +1840,8 @@ init_aggr_designated(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r,
 				BUFFER init_buf = { 0 };
 				FieldIterator_t sort_iter = { &sort_iter_buf };
 				InitialisersInOrder_t designated_inits = { 0 };
+				int partition_start = 0;
+				int swap_at = 0;
 				LIST(EXP) p = *r;
 
 				init_hash_for_table(&designated_init_paths, HASH_SIZE);
@@ -1855,12 +1867,60 @@ init_aggr_designated(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r,
 
 				while (!IS_NULL_list(p)) {
 								EXP e = DEREF_exp(HEAD_list(p));
-								iio_realloc_copy_in(&designated_inits, e);
+								LIST(EXP) elist = NULL_list(EXP);
+
+								do {
+												unsigned tag = TAG_exp(e);
+												if (tag == exp_designated_name_tag) {
+																break;
+												}
+
+												CONS_list(e, elist, elist);
+												p = TAIL_list(p);
+								} while (BOOL_TRUE);
+
+								elist = REVERSE_list(elist);
+								iio_realloc_copy_in(&designated_inits, elist);
 				}
 
-				while (field_iter_next(&sort_iter)) {
+				/*
+					  Do a radix-style sort on the elements of the array by
+						realizing the path represented by each list head and
+						matching each iterated field name as a prefix as though
+						followed by either '.', '[' or the end of the string.
+				 */
+
+				while (field_iterator_next(&sort_iter)) {
 								int i;
-								for (i = 0; i < 
+
+								for (i = 0; i < designated_inits.iio_len; i++) {
+												if (designator_prefix_match(
+																		sort_iter_buf.start,
+																		designated_inits.iio_refs[i]
+																		)
+																) {
+																LIST(EXP) temp = designated_inits.iio_refs[swap_at];
+
+																if (i != swap_at) {
+																				designated_inits.iio_refs[swap_at] =
+																								designated_inits.iio_refs[i];
+																				designated_inits.iio_refs[i] = temp;
+																}
+
+																swap_at++;
+												}
+								}
+
+								if (partition_start != swap_at) {
+												TYPE subtype = field_iterator_get_subtype(&sort_iter);
+												CV_SPEC local_cv = field_iterator_get_effective_cv_spec(&sort_iter);
+
+												field_iterator_push(&sort_iter, subtype, local_cv);
+												designated_recurse_sort(&sort_iter, &designated_inits, partition_start, swap_at);
+												field_iterator_pop(&sort_iter);
+								}
+
+								partition_start = swap_at;
 				}
 
 				iio_free(&designated_inits);
@@ -1881,11 +1941,12 @@ detect_designated_initialiser(LIST(EXP) p) {
 				while (!IS_NULL_list(p)) {
 								EXP a = DEREF_exp(HEAD_list(p));
 								unsigned tag = TAG_exp(a);
+								LIST(EXP) q = NULL_list(EXP);
+
 								if (tag == exp_designated_name_tag) {
 												return BOOL_TRUE;
 								} else if (tag == exp_aggregate_tag) {
-												LIST(EXP) q;
-												q = DEREF_list(exp_aggregate_args(a), &subexps);
+												CONS_list(exp_aggregate_args(a), q, q);
 												if (detect_designated_initialiser(q)) {
 																return BOOL_TRUE;
 												}
@@ -1922,7 +1983,7 @@ init_aggregate(TYPE t, EXP e, IDENTIFIER id, ERROR *err)
 	if (detect_designated_initialiser(args)) {
 		e = init_aggr_designated(&sf_iter, t, cv_none, &args, 2, id, err);
 	} else {
-		e = init_aggr_aux(&sf_iter, t, cv_none, &args, 2, id, err);
+		e = init_aggr_aux(&sf_iter, t, cv_none, &args, 2, NULL_list(EXP), id, err);
 	}
 	field_iterator_free(&sf_iter);
 	free_buffer(&field_buffer);
