@@ -901,7 +901,7 @@ copy_exp(EXP e, TYPE t1, TYPE t2)
 		t1 = t;
 		t2 = expand_type(t, 1);
 	}
-	assert(ORDER_exp == 89);
+	assert(ORDER_exp == 90);
 	tag = TAG_exp(e);
 	switch (tag) {
 	case exp_identifier_tag:
@@ -1634,7 +1634,7 @@ eval_exp(EXP e, int ch)
 	if (IS_NULL_exp(e)) {
 		return NULL_exp;
 	}
-	assert(ORDER_exp == 89);
+	assert(ORDER_exp == 90);
 	tag = TAG_exp(e);
 	switch (tag) {
 	case exp_int_lit_tag: {

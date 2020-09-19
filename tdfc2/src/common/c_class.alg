@@ -1325,7 +1325,12 @@ union EXP (exp) = {
     IDENTIFIER member_name;
     EXP member_initialiser;
   },
-    dummy -> {
+  designated_subscript -> {
+    /* Designated array Initializer */
+    EXP index;
+    EXP member_initialiser;
+  },
+  dummy -> {
 	/* Dummy expression */
 	EXP value ;
 	ulong_type no ;

@@ -310,6 +310,7 @@ literal : () -> ( e : EXP ) = {
 <exp_paren_end> : ( :EXP ) -> ( :EXP ) ;
 <exp_identifier> : ( :IDENTIFIER ) -> ( :EXP ) ;
 <exp_designated_with_identifier> : ( :IDENTIFIER, :EXP ) -> ( :EXP ) ;
+<exp_designated_with_subscript> : ( :EXP, :EXP ) -> ( :EXP ) ;
 
 expression : () -> ( :EXP ) ;
 
@@ -2279,6 +2280,14 @@ initialiser-clause : ( d : DECL ) -> ( e : EXP ) = {
       assign ;
       a = initialiser-clause ( d );
 	    e = <exp_designated_with_identifier> ( id, a ) ;
+    } ;
+    ||
+    {
+      open-square ;
+      a = constant-expression ;
+      close-square ;
+      b = initialiser-clause ( d );
+      e = <exp_designated_with_subscript> ( a, b ) ;
     } ;
     ||
 	open-brace ;

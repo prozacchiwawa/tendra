@@ -2116,7 +2116,7 @@ extern void clear_c_class_alias(void);
 
 /* Definitions for union EXP */
 
-#define ORDER_exp			((unsigned) 89)
+#define ORDER_exp			((unsigned) 90)
 #define SIZE_exp			1
 #define NULL_exp			((EXP) 0)
 #define IS_NULL_exp(A)			((A) == 0)

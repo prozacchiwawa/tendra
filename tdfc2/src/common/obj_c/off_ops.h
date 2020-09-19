@@ -27,23 +27,23 @@
 
 #define MAKE_off_zero(type_, c_class_off)\
     {\
-	c_class *x781_ = GEN_c_class(2, TYPEID_off);\
-	x781_->ag_tag = 0;\
-	COPY_type(x781_ + 1, (type_));\
-	(c_class_off) = x781_;\
+	c_class *x784_ = GEN_c_class(2, TYPEID_off);\
+	x784_->ag_tag = 0;\
+	COPY_type(x784_ + 1, (type_));\
+	(c_class_off) = x784_;\
     }
 
 #define DECONS_off_zero(type_, c_class_off)\
     {\
-	c_class *x782_ = CHECK_TAG((c_class_off), 0);\
-	(type_) = DEREF_type(x782_ + 1);\
+	c_class *x785_ = CHECK_TAG((c_class_off), 0);\
+	(type_) = DEREF_type(x785_ + 1);\
     }
 
 #define DESTROY_off_zero(destroyer_, type_, c_class_off)\
     {\
-	c_class *x783_ = CHECK_TAG((c_class_off), 0);\
-	(type_) = DEREF_type(x783_ + 1);\
-	(destroyer_)(x783_, (unsigned)2);\
+	c_class *x786_ = CHECK_TAG((c_class_off), 0);\
+	(type_) = DEREF_type(x786_ + 1);\
+	(destroyer_)(x786_, (unsigned)2);\
     }
 
 
@@ -56,23 +56,23 @@
 
 #define MAKE_off_type(type_, c_class_off)\
     {\
-	c_class *x784_ = GEN_c_class(2, TYPEID_off);\
-	x784_->ag_tag = 1;\
-	COPY_type(x784_ + 1, (type_));\
-	(c_class_off) = x784_;\
+	c_class *x787_ = GEN_c_class(2, TYPEID_off);\
+	x787_->ag_tag = 1;\
+	COPY_type(x787_ + 1, (type_));\
+	(c_class_off) = x787_;\
     }
 
 #define DECONS_off_type(type_, c_class_off)\
     {\
-	c_class *x785_ = CHECK_TAG((c_class_off), 1);\
-	(type_) = DEREF_type(x785_ + 1);\
+	c_class *x788_ = CHECK_TAG((c_class_off), 1);\
+	(type_) = DEREF_type(x788_ + 1);\
     }
 
 #define DESTROY_off_type(destroyer_, type_, c_class_off)\
     {\
-	c_class *x786_ = CHECK_TAG((c_class_off), 1);\
-	(type_) = DEREF_type(x786_ + 1);\
-	(destroyer_)(x786_, (unsigned)2);\
+	c_class *x789_ = CHECK_TAG((c_class_off), 1);\
+	(type_) = DEREF_type(x789_ + 1);\
+	(destroyer_)(x789_, (unsigned)2);\
     }
 
 
@@ -86,26 +86,26 @@
 
 #define MAKE_off_array(type_, arg_, c_class_off)\
     {\
-	c_class *x787_ = GEN_c_class(3, TYPEID_off);\
-	x787_->ag_tag = 2;\
-	COPY_type(x787_ + 1, (type_));\
-	COPY_unsigned(x787_ + 2, (arg_));\
-	(c_class_off) = x787_;\
+	c_class *x790_ = GEN_c_class(3, TYPEID_off);\
+	x790_->ag_tag = 2;\
+	COPY_type(x790_ + 1, (type_));\
+	COPY_unsigned(x790_ + 2, (arg_));\
+	(c_class_off) = x790_;\
     }
 
 #define DECONS_off_array(type_, arg_, c_class_off)\
     {\
-	c_class *x788_ = CHECK_TAG((c_class_off), 2);\
-	(type_) = DEREF_type(x788_ + 1);\
-	(arg_) = DEREF_unsigned(x788_ + 2);\
+	c_class *x791_ = CHECK_TAG((c_class_off), 2);\
+	(type_) = DEREF_type(x791_ + 1);\
+	(arg_) = DEREF_unsigned(x791_ + 2);\
     }
 
 #define DESTROY_off_array(destroyer_, type_, arg_, c_class_off)\
     {\
-	c_class *x789_ = CHECK_TAG((c_class_off), 2);\
-	(type_) = DEREF_type(x789_ + 1);\
-	(arg_) = DEREF_unsigned(x789_ + 2);\
-	(destroyer_)(x789_, (unsigned)3);\
+	c_class *x792_ = CHECK_TAG((c_class_off), 2);\
+	(type_) = DEREF_type(x792_ + 1);\
+	(arg_) = DEREF_unsigned(x792_ + 2);\
+	(destroyer_)(x792_, (unsigned)3);\
     }
 
 
@@ -119,26 +119,26 @@
 
 #define MAKE_off_extra(type_, scale_, c_class_off)\
     {\
-	c_class *x790_ = GEN_c_class(3, TYPEID_off);\
-	x790_->ag_tag = 3;\
-	COPY_type(x790_ + 1, (type_));\
-	COPY_int(x790_ + 2, (scale_));\
-	(c_class_off) = x790_;\
+	c_class *x793_ = GEN_c_class(3, TYPEID_off);\
+	x793_->ag_tag = 3;\
+	COPY_type(x793_ + 1, (type_));\
+	COPY_int(x793_ + 2, (scale_));\
+	(c_class_off) = x793_;\
     }
 
 #define DECONS_off_extra(type_, scale_, c_class_off)\
     {\
-	c_class *x791_ = CHECK_TAG((c_class_off), 3);\
-	(type_) = DEREF_type(x791_ + 1);\
-	(scale_) = DEREF_int(x791_ + 2);\
+	c_class *x794_ = CHECK_TAG((c_class_off), 3);\
+	(type_) = DEREF_type(x794_ + 1);\
+	(scale_) = DEREF_int(x794_ + 2);\
     }
 
 #define DESTROY_off_extra(destroyer_, type_, scale_, c_class_off)\
     {\
-	c_class *x792_ = CHECK_TAG((c_class_off), 3);\
-	(type_) = DEREF_type(x792_ + 1);\
-	(scale_) = DEREF_int(x792_ + 2);\
-	(destroyer_)(x792_, (unsigned)3);\
+	c_class *x795_ = CHECK_TAG((c_class_off), 3);\
+	(type_) = DEREF_type(x795_ + 1);\
+	(scale_) = DEREF_int(x795_ + 2);\
+	(destroyer_)(x795_, (unsigned)3);\
     }
 
 
@@ -151,23 +151,23 @@
 
 #define MAKE_off_base(graph_, c_class_off)\
     {\
-	c_class *x793_ = GEN_c_class(2, TYPEID_off);\
-	x793_->ag_tag = 4;\
-	COPY_graph(x793_ + 1, (graph_));\
-	(c_class_off) = x793_;\
+	c_class *x796_ = GEN_c_class(2, TYPEID_off);\
+	x796_->ag_tag = 4;\
+	COPY_graph(x796_ + 1, (graph_));\
+	(c_class_off) = x796_;\
     }
 
 #define DECONS_off_base(graph_, c_class_off)\
     {\
-	c_class *x794_ = CHECK_TAG((c_class_off), 4);\
-	(graph_) = DEREF_graph(x794_ + 1);\
+	c_class *x797_ = CHECK_TAG((c_class_off), 4);\
+	(graph_) = DEREF_graph(x797_ + 1);\
     }
 
 #define DESTROY_off_base(destroyer_, graph_, c_class_off)\
     {\
-	c_class *x795_ = CHECK_TAG((c_class_off), 4);\
-	(graph_) = DEREF_graph(x795_ + 1);\
-	(destroyer_)(x795_, (unsigned)2);\
+	c_class *x798_ = CHECK_TAG((c_class_off), 4);\
+	(graph_) = DEREF_graph(x798_ + 1);\
+	(destroyer_)(x798_, (unsigned)2);\
     }
 
 
@@ -182,29 +182,29 @@
 
 #define MAKE_off_deriv(graph_, direct_, indirect_, c_class_off)\
     {\
-	c_class *x796_ = GEN_c_class(4, TYPEID_off);\
-	x796_->ag_tag = 5;\
-	COPY_graph(x796_ + 1, (graph_));\
-	COPY_off(x796_ + 2, (direct_));\
-	COPY_off(x796_ + 3, (indirect_));\
-	(c_class_off) = x796_;\
+	c_class *x799_ = GEN_c_class(4, TYPEID_off);\
+	x799_->ag_tag = 5;\
+	COPY_graph(x799_ + 1, (graph_));\
+	COPY_off(x799_ + 2, (direct_));\
+	COPY_off(x799_ + 3, (indirect_));\
+	(c_class_off) = x799_;\
     }
 
 #define DECONS_off_deriv(graph_, direct_, indirect_, c_class_off)\
     {\
-	c_class *x797_ = CHECK_TAG((c_class_off), 5);\
-	(graph_) = DEREF_graph(x797_ + 1);\
-	(direct_) = DEREF_off(x797_ + 2);\
-	(indirect_) = DEREF_off(x797_ + 3);\
+	c_class *x800_ = CHECK_TAG((c_class_off), 5);\
+	(graph_) = DEREF_graph(x800_ + 1);\
+	(direct_) = DEREF_off(x800_ + 2);\
+	(indirect_) = DEREF_off(x800_ + 3);\
     }
 
 #define DESTROY_off_deriv(destroyer_, graph_, direct_, indirect_, c_class_off)\
     {\
-	c_class *x798_ = CHECK_TAG((c_class_off), 5);\
-	(graph_) = DEREF_graph(x798_ + 1);\
-	(direct_) = DEREF_off(x798_ + 2);\
-	(indirect_) = DEREF_off(x798_ + 3);\
-	(destroyer_)(x798_, (unsigned)4);\
+	c_class *x801_ = CHECK_TAG((c_class_off), 5);\
+	(graph_) = DEREF_graph(x801_ + 1);\
+	(direct_) = DEREF_off(x801_ + 2);\
+	(indirect_) = DEREF_off(x801_ + 3);\
+	(destroyer_)(x801_, (unsigned)4);\
     }
 
 
@@ -217,23 +217,23 @@
 
 #define MAKE_off_member(id_, c_class_off)\
     {\
-	c_class *x799_ = GEN_c_class(2, TYPEID_off);\
-	x799_->ag_tag = 6;\
-	COPY_id(x799_ + 1, (id_));\
-	(c_class_off) = x799_;\
+	c_class *x802_ = GEN_c_class(2, TYPEID_off);\
+	x802_->ag_tag = 6;\
+	COPY_id(x802_ + 1, (id_));\
+	(c_class_off) = x802_;\
     }
 
 #define DECONS_off_member(id_, c_class_off)\
     {\
-	c_class *x800_ = CHECK_TAG((c_class_off), 6);\
-	(id_) = DEREF_id(x800_ + 1);\
+	c_class *x803_ = CHECK_TAG((c_class_off), 6);\
+	(id_) = DEREF_id(x803_ + 1);\
     }
 
 #define DESTROY_off_member(destroyer_, id_, c_class_off)\
     {\
-	c_class *x801_ = CHECK_TAG((c_class_off), 6);\
-	(id_) = DEREF_id(x801_ + 1);\
-	(destroyer_)(x801_, (unsigned)2);\
+	c_class *x804_ = CHECK_TAG((c_class_off), 6);\
+	(id_) = DEREF_id(x804_ + 1);\
+	(destroyer_)(x804_, (unsigned)2);\
     }
 
 
@@ -246,23 +246,23 @@
 
 #define MAKE_off_ptr_mem(arg_, c_class_off)\
     {\
-	c_class *x802_ = GEN_c_class(2, TYPEID_off);\
-	x802_->ag_tag = 7;\
-	COPY_exp(x802_ + 1, (arg_));\
-	(c_class_off) = x802_;\
+	c_class *x805_ = GEN_c_class(2, TYPEID_off);\
+	x805_->ag_tag = 7;\
+	COPY_exp(x805_ + 1, (arg_));\
+	(c_class_off) = x805_;\
     }
 
 #define DECONS_off_ptr_mem(arg_, c_class_off)\
     {\
-	c_class *x803_ = CHECK_TAG((c_class_off), 7);\
-	(arg_) = DEREF_exp(x803_ + 1);\
+	c_class *x806_ = CHECK_TAG((c_class_off), 7);\
+	(arg_) = DEREF_exp(x806_ + 1);\
     }
 
 #define DESTROY_off_ptr_mem(destroyer_, arg_, c_class_off)\
     {\
-	c_class *x804_ = CHECK_TAG((c_class_off), 7);\
-	(arg_) = DEREF_exp(x804_ + 1);\
-	(destroyer_)(x804_, (unsigned)2);\
+	c_class *x807_ = CHECK_TAG((c_class_off), 7);\
+	(arg_) = DEREF_exp(x807_ + 1);\
+	(destroyer_)(x807_, (unsigned)2);\
     }
 
 
@@ -275,23 +275,23 @@
 
 #define MAKE_off_negate(arg_, c_class_off)\
     {\
-	c_class *x805_ = GEN_c_class(2, TYPEID_off);\
-	x805_->ag_tag = 8;\
-	COPY_off(x805_ + 1, (arg_));\
-	(c_class_off) = x805_;\
+	c_class *x808_ = GEN_c_class(2, TYPEID_off);\
+	x808_->ag_tag = 8;\
+	COPY_off(x808_ + 1, (arg_));\
+	(c_class_off) = x808_;\
     }
 
 #define DECONS_off_negate(arg_, c_class_off)\
     {\
-	c_class *x806_ = CHECK_TAG((c_class_off), 8);\
-	(arg_) = DEREF_off(x806_ + 1);\
+	c_class *x809_ = CHECK_TAG((c_class_off), 8);\
+	(arg_) = DEREF_off(x809_ + 1);\
     }
 
 #define DESTROY_off_negate(destroyer_, arg_, c_class_off)\
     {\
-	c_class *x807_ = CHECK_TAG((c_class_off), 8);\
-	(arg_) = DEREF_off(x807_ + 1);\
-	(destroyer_)(x807_, (unsigned)2);\
+	c_class *x810_ = CHECK_TAG((c_class_off), 8);\
+	(arg_) = DEREF_off(x810_ + 1);\
+	(destroyer_)(x810_, (unsigned)2);\
     }
 
 
@@ -305,26 +305,26 @@
 
 #define MAKE_off_plus(arg1_, arg2_, c_class_off)\
     {\
-	c_class *x808_ = GEN_c_class(3, TYPEID_off);\
-	x808_->ag_tag = 9;\
-	COPY_off(x808_ + 1, (arg1_));\
-	COPY_off(x808_ + 2, (arg2_));\
-	(c_class_off) = x808_;\
+	c_class *x811_ = GEN_c_class(3, TYPEID_off);\
+	x811_->ag_tag = 9;\
+	COPY_off(x811_ + 1, (arg1_));\
+	COPY_off(x811_ + 2, (arg2_));\
+	(c_class_off) = x811_;\
     }
 
 #define DECONS_off_plus(arg1_, arg2_, c_class_off)\
     {\
-	c_class *x809_ = CHECK_TAG((c_class_off), 9);\
-	(arg1_) = DEREF_off(x809_ + 1);\
-	(arg2_) = DEREF_off(x809_ + 2);\
+	c_class *x812_ = CHECK_TAG((c_class_off), 9);\
+	(arg1_) = DEREF_off(x812_ + 1);\
+	(arg2_) = DEREF_off(x812_ + 2);\
     }
 
 #define DESTROY_off_plus(destroyer_, arg1_, arg2_, c_class_off)\
     {\
-	c_class *x810_ = CHECK_TAG((c_class_off), 9);\
-	(arg1_) = DEREF_off(x810_ + 1);\
-	(arg2_) = DEREF_off(x810_ + 2);\
-	(destroyer_)(x810_, (unsigned)3);\
+	c_class *x813_ = CHECK_TAG((c_class_off), 9);\
+	(arg1_) = DEREF_off(x813_ + 1);\
+	(arg2_) = DEREF_off(x813_ + 2);\
+	(destroyer_)(x813_, (unsigned)3);\
     }
 
 
@@ -338,26 +338,26 @@
 
 #define MAKE_off_mult(arg1_, arg2_, c_class_off)\
     {\
-	c_class *x811_ = GEN_c_class(3, TYPEID_off);\
-	x811_->ag_tag = 10;\
-	COPY_off(x811_ + 1, (arg1_));\
-	COPY_exp(x811_ + 2, (arg2_));\
-	(c_class_off) = x811_;\
+	c_class *x814_ = GEN_c_class(3, TYPEID_off);\
+	x814_->ag_tag = 10;\
+	COPY_off(x814_ + 1, (arg1_));\
+	COPY_exp(x814_ + 2, (arg2_));\
+	(c_class_off) = x814_;\
     }
 
 #define DECONS_off_mult(arg1_, arg2_, c_class_off)\
     {\
-	c_class *x812_ = CHECK_TAG((c_class_off), 10);\
-	(arg1_) = DEREF_off(x812_ + 1);\
-	(arg2_) = DEREF_exp(x812_ + 2);\
+	c_class *x815_ = CHECK_TAG((c_class_off), 10);\
+	(arg1_) = DEREF_off(x815_ + 1);\
+	(arg2_) = DEREF_exp(x815_ + 2);\
     }
 
 #define DESTROY_off_mult(destroyer_, arg1_, arg2_, c_class_off)\
     {\
-	c_class *x813_ = CHECK_TAG((c_class_off), 10);\
-	(arg1_) = DEREF_off(x813_ + 1);\
-	(arg2_) = DEREF_exp(x813_ + 2);\
-	(destroyer_)(x813_, (unsigned)3);\
+	c_class *x816_ = CHECK_TAG((c_class_off), 10);\
+	(arg1_) = DEREF_off(x816_ + 1);\
+	(arg2_) = DEREF_exp(x816_ + 2);\
+	(destroyer_)(x816_, (unsigned)3);\
     }
 
 
@@ -371,26 +371,26 @@
 
 #define MAKE_off_ptr_diff(ptr1_, ptr2_, c_class_off)\
     {\
-	c_class *x814_ = GEN_c_class(3, TYPEID_off);\
-	x814_->ag_tag = 11;\
-	COPY_exp(x814_ + 1, (ptr1_));\
-	COPY_exp(x814_ + 2, (ptr2_));\
-	(c_class_off) = x814_;\
+	c_class *x817_ = GEN_c_class(3, TYPEID_off);\
+	x817_->ag_tag = 11;\
+	COPY_exp(x817_ + 1, (ptr1_));\
+	COPY_exp(x817_ + 2, (ptr2_));\
+	(c_class_off) = x817_;\
     }
 
 #define DECONS_off_ptr_diff(ptr1_, ptr2_, c_class_off)\
     {\
-	c_class *x815_ = CHECK_TAG((c_class_off), 11);\
-	(ptr1_) = DEREF_exp(x815_ + 1);\
-	(ptr2_) = DEREF_exp(x815_ + 2);\
+	c_class *x818_ = CHECK_TAG((c_class_off), 11);\
+	(ptr1_) = DEREF_exp(x818_ + 1);\
+	(ptr2_) = DEREF_exp(x818_ + 2);\
     }
 
 #define DESTROY_off_ptr_diff(destroyer_, ptr1_, ptr2_, c_class_off)\
     {\
-	c_class *x816_ = CHECK_TAG((c_class_off), 11);\
-	(ptr1_) = DEREF_exp(x816_ + 1);\
-	(ptr2_) = DEREF_exp(x816_ + 2);\
-	(destroyer_)(x816_, (unsigned)3);\
+	c_class *x819_ = CHECK_TAG((c_class_off), 11);\
+	(ptr1_) = DEREF_exp(x819_ + 1);\
+	(ptr2_) = DEREF_exp(x819_ + 2);\
+	(destroyer_)(x819_, (unsigned)3);\
     }
 
 
@@ -404,26 +404,26 @@
 
 #define MAKE_off_token(tok_, args_, c_class_off)\
     {\
-	c_class *x817_ = GEN_c_class(3, TYPEID_off);\
-	x817_->ag_tag = 12;\
-	COPY_id(x817_ + 1, (tok_));\
-	COPY_list(x817_ + 2, (args_));\
-	(c_class_off) = x817_;\
+	c_class *x820_ = GEN_c_class(3, TYPEID_off);\
+	x820_->ag_tag = 12;\
+	COPY_id(x820_ + 1, (tok_));\
+	COPY_list(x820_ + 2, (args_));\
+	(c_class_off) = x820_;\
     }
 
 #define DECONS_off_token(tok_, args_, c_class_off)\
     {\
-	c_class *x818_ = CHECK_TAG((c_class_off), 12);\
-	(tok_) = DEREF_id(x818_ + 1);\
-	(args_) = DEREF_list(x818_ + 2);\
+	c_class *x821_ = CHECK_TAG((c_class_off), 12);\
+	(tok_) = DEREF_id(x821_ + 1);\
+	(args_) = DEREF_list(x821_ + 2);\
     }
 
 #define DESTROY_off_token(destroyer_, tok_, args_, c_class_off)\
     {\
-	c_class *x819_ = CHECK_TAG((c_class_off), 12);\
-	(tok_) = DEREF_id(x819_ + 1);\
-	(args_) = DEREF_list(x819_ + 2);\
-	(destroyer_)(x819_, (unsigned)3);\
+	c_class *x822_ = CHECK_TAG((c_class_off), 12);\
+	(tok_) = DEREF_id(x822_ + 1);\
+	(args_) = DEREF_list(x822_ + 2);\
+	(destroyer_)(x822_, (unsigned)3);\
     }
 
 

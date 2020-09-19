@@ -215,7 +215,7 @@ free_exp(EXP e, int force)
 	COPY_type(exp_type(e), NULL_type);
 
 	/* Deal with the various cases */
-	assert(ORDER_exp == 89);
+	assert(ORDER_exp == 90);
 	switch (TAG_exp(e)) {
 	case exp_identifier_tag:
 	case exp_member_tag:
@@ -791,12 +791,19 @@ free_exp(EXP e, int force)
 		break;
 	}
 	case exp_designated_name_tag: {
-					IDENTIFIER id;
-					EXP initializer;
-					DESTROY_exp_designated_name(destroy, t, id, initializer, e);
-					UNUSED(id);
-					UNUSED(initializer);
-					break;
+		IDENTIFIER id;
+		EXP initializer;
+		DESTROY_exp_designated_name(destroy, t, id, initializer, e);
+		UNUSED(id);
+		UNUSED(initializer);
+		break;
+	}
+	case exp_designated_subscript_tag: {
+		EXP index, initializer;
+		DESTROY_exp_designated_subscript(destroy, t, index, initializer, e);
+		UNUSED(index);
+		UNUSED(initializer);
+		break;
 	}
 	case exp_dummy_tag: {
 		int v;

@@ -213,7 +213,7 @@ static int
 eq_exp_aux(EXP a, EXP b, int co)
 {
 	/* Check expressions */
-	assert(ORDER_exp == 89);
+	assert(ORDER_exp == 90);
 	switch (TAG_exp(a)) {
 	case exp_identifier_tag:
 	case exp_member_tag:
@@ -1197,7 +1197,7 @@ is_const_exp(EXP e, int c)
 	if (IS_NULL_exp(e)) {
 		return 1;
 	}
-	assert(ORDER_exp == 89);
+	assert(ORDER_exp == 90);
 	switch (TAG_exp(e)) {
 	case exp_int_lit_tag:
 	case exp_char_lit_tag: {

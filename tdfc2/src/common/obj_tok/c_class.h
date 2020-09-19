@@ -2238,7 +2238,7 @@ extern void clear_c_class_alias(void);
 
 /* Definitions for union EXP */
 
-#define ORDER_exp ((unsigned)88)
+#define ORDER_exp ((unsigned)90)
 #pragma token EXP const : EXP : NULL_exp #
 #pragma token PROC(EXP : EXP :) EXP : int : IS_NULL_exp #
 #pragma token PROC(EXP : EXP :, EXP : EXP :) EXP : int : EQ_exp #

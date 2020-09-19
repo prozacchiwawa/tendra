@@ -529,6 +529,10 @@ complex-type : () -> ( t ) = @{
     MAKE_exp_designated_name( type_void, @id, @a, @e );
 @} ;
 
+<exp_designated_with_subscript> : ( a, b ) -> ( e ) = @{
+    MAKE_exp_designated_subscript( type_void, @a, @b, @e );
+@} ;
+
 <exp_log_and> : ( a, b ) -> ( e ) = @{
     @e = make_log_and_exp ( @a, @b ) ;
 @} ;

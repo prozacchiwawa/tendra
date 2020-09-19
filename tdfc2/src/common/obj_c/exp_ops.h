@@ -3660,51 +3660,87 @@
     }
 
 
+/* Operations for field designated_subscript of union EXP */
+
+#define exp_designated_subscript_tag	((unsigned)88)
+#define IS_exp_designated_subscript(P)	(CHECK_NULL(P)->ag_tag == 88)
+
+#define exp_designated_subscript_index(P)(CHECK_TAG((P), 88) + 2)
+#define exp_designated_subscript_member_initialiser(P)(CHECK_TAG((P), 88) + 3)
+
+#define MAKE_exp_designated_subscript(type_, index_, member_initialiser_, c_class_exp)\
+    {\
+	c_class *x778_ = GEN_c_class(4, TYPEID_exp);\
+	x778_->ag_tag = 88;\
+	COPY_type(x778_ + 1, (type_));\
+	COPY_exp(x778_ + 2, (index_));\
+	COPY_exp(x778_ + 3, (member_initialiser_));\
+	(c_class_exp) = x778_;\
+    }
+
+#define DECONS_exp_designated_subscript(type_, index_, member_initialiser_, c_class_exp)\
+    {\
+	c_class *x779_ = CHECK_TAG((c_class_exp), 88);\
+	(type_) = DEREF_type(x779_ + 1);\
+	(index_) = DEREF_exp(x779_ + 2);\
+	(member_initialiser_) = DEREF_exp(x779_ + 3);\
+    }
+
+#define DESTROY_exp_designated_subscript(destroyer_, type_, index_, member_initialiser_, c_class_exp)\
+    {\
+	c_class *x780_ = CHECK_TAG((c_class_exp), 88);\
+	(type_) = DEREF_type(x780_ + 1);\
+	(index_) = DEREF_exp(x780_ + 2);\
+	(member_initialiser_) = DEREF_exp(x780_ + 3);\
+	(destroyer_)(x780_, (unsigned)4);\
+    }
+
+
 /* Operations for field dummy of union EXP */
 
-#define exp_dummy_tag			((unsigned)88)
-#define IS_exp_dummy(P)			(CHECK_NULL(P)->ag_tag == 88)
+#define exp_dummy_tag			((unsigned)89)
+#define IS_exp_dummy(P)			(CHECK_NULL(P)->ag_tag == 89)
 
-#define exp_dummy_value(P)		(CHECK_TAG((P), 88) + 2)
-#define exp_dummy_no(P)			(CHECK_TAG((P), 88) + 3)
-#define exp_dummy_off(P)		(CHECK_TAG((P), 88) + 4)
-#define exp_dummy_virt(P)		(CHECK_TAG((P), 88) + 5)
-#define exp_dummy_cont(P)		(CHECK_TAG((P), 88) + 6)
+#define exp_dummy_value(P)		(CHECK_TAG((P), 89) + 2)
+#define exp_dummy_no(P)			(CHECK_TAG((P), 89) + 3)
+#define exp_dummy_off(P)		(CHECK_TAG((P), 89) + 4)
+#define exp_dummy_virt(P)		(CHECK_TAG((P), 89) + 5)
+#define exp_dummy_cont(P)		(CHECK_TAG((P), 89) + 6)
 
 #define MAKE_exp_dummy(type_, value_, no_, off_, cont_, c_class_exp)\
     {\
-	c_class *x778_ = GEN_c_class(7, TYPEID_exp);\
-	x778_->ag_tag = 88;\
-	COPY_type(x778_ + 1, (type_));\
-	COPY_exp(x778_ + 2, (value_));\
-	COPY_ulong(x778_ + 3, (no_));\
-	COPY_off(x778_ + 4, (off_));\
-	COPY_int(x778_ + 5, 0);\
-	COPY_int(x778_ + 6, (cont_));\
-	(c_class_exp) = x778_;\
+	c_class *x781_ = GEN_c_class(7, TYPEID_exp);\
+	x781_->ag_tag = 89;\
+	COPY_type(x781_ + 1, (type_));\
+	COPY_exp(x781_ + 2, (value_));\
+	COPY_ulong(x781_ + 3, (no_));\
+	COPY_off(x781_ + 4, (off_));\
+	COPY_int(x781_ + 5, 0);\
+	COPY_int(x781_ + 6, (cont_));\
+	(c_class_exp) = x781_;\
     }
 
 #define DECONS_exp_dummy(type_, value_, no_, off_, virt_, cont_, c_class_exp)\
     {\
-	c_class *x779_ = CHECK_TAG((c_class_exp), 88);\
-	(type_) = DEREF_type(x779_ + 1);\
-	(value_) = DEREF_exp(x779_ + 2);\
-	(no_) = DEREF_ulong(x779_ + 3);\
-	(off_) = DEREF_off(x779_ + 4);\
-	(virt_) = DEREF_int(x779_ + 5);\
-	(cont_) = DEREF_int(x779_ + 6);\
+	c_class *x782_ = CHECK_TAG((c_class_exp), 89);\
+	(type_) = DEREF_type(x782_ + 1);\
+	(value_) = DEREF_exp(x782_ + 2);\
+	(no_) = DEREF_ulong(x782_ + 3);\
+	(off_) = DEREF_off(x782_ + 4);\
+	(virt_) = DEREF_int(x782_ + 5);\
+	(cont_) = DEREF_int(x782_ + 6);\
     }
 
 #define DESTROY_exp_dummy(destroyer_, type_, value_, no_, off_, virt_, cont_, c_class_exp)\
     {\
-	c_class *x780_ = CHECK_TAG((c_class_exp), 88);\
-	(type_) = DEREF_type(x780_ + 1);\
-	(value_) = DEREF_exp(x780_ + 2);\
-	(no_) = DEREF_ulong(x780_ + 3);\
-	(off_) = DEREF_off(x780_ + 4);\
-	(virt_) = DEREF_int(x780_ + 5);\
-	(cont_) = DEREF_int(x780_ + 6);\
-	(destroyer_)(x780_, (unsigned)7);\
+	c_class *x783_ = CHECK_TAG((c_class_exp), 89);\
+	(type_) = DEREF_type(x783_ + 1);\
+	(value_) = DEREF_exp(x783_ + 2);\
+	(no_) = DEREF_ulong(x783_ + 3);\
+	(off_) = DEREF_off(x783_ + 4);\
+	(virt_) = DEREF_int(x783_ + 5);\
+	(cont_) = DEREF_int(x783_ + 6);\
+	(destroyer_)(x783_, (unsigned)7);\
     }
 
 

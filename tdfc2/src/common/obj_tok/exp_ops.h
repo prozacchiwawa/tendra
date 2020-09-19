@@ -4069,6 +4069,86 @@
 #pragma interface DESTROY_exp_token
 
 
+/* Operations for field designated_name of union EXP */
+
+#pragma token EXP const : unsigned : exp_designated_name_tag #
+#pragma token PROC(EXP : EXP :) EXP : int : IS_exp_designated_name #
+#pragma interface exp_designated_name_tag IS_exp_designated_name
+
+#pragma token PROC(EXP : EXP :)\
+    EXP : PTR(IDENTIFIER) : exp_designated_name_member_name #
+#pragma interface exp_designated_name_member_name
+
+#pragma token PROC(EXP : EXP :)\
+    EXP : PTR(EXP) : exp_designated_name_member_initialiser #
+#pragma interface exp_designated_name_member_initialiser
+
+#pragma token PROC(\
+	EXP : TYPE :,\
+	EXP : IDENTIFIER :,\
+	EXP : EXP :,\
+	EXP lvalue : EXP :\
+    ) STATEMENT MAKE_exp_designated_name #
+#pragma interface MAKE_exp_designated_name
+
+#pragma token PROC(\
+	EXP lvalue : TYPE :,\
+	EXP lvalue : IDENTIFIER :,\
+	EXP lvalue : EXP :,\
+	EXP : EXP :\
+    ) STATEMENT DECONS_exp_designated_name #
+#pragma interface DECONS_exp_designated_name
+
+#pragma token PROC(\
+	EXP : DESTROYER :,\
+	EXP lvalue : TYPE :,\
+	EXP lvalue : IDENTIFIER :,\
+	EXP lvalue : EXP :,\
+	EXP : EXP :\
+    ) STATEMENT DESTROY_exp_designated_name #
+#pragma interface DESTROY_exp_designated_name
+
+
+/* Operations for field designated_subscript of union EXP */
+
+#pragma token EXP const : unsigned : exp_designated_subscript_tag #
+#pragma token PROC(EXP : EXP :) EXP : int : IS_exp_designated_subscript #
+#pragma interface exp_designated_subscript_tag IS_exp_designated_subscript
+
+#pragma token PROC(EXP : EXP :)\
+    EXP : PTR(EXP) : exp_designated_subscript_index #
+#pragma interface exp_designated_subscript_index
+
+#pragma token PROC(EXP : EXP :)\
+    EXP : PTR(EXP) : exp_designated_subscript_member_initialiser #
+#pragma interface exp_designated_subscript_member_initialiser
+
+#pragma token PROC(\
+	EXP : TYPE :,\
+	EXP : EXP :,\
+	EXP : EXP :,\
+	EXP lvalue : EXP :\
+    ) STATEMENT MAKE_exp_designated_subscript #
+#pragma interface MAKE_exp_designated_subscript
+
+#pragma token PROC(\
+	EXP lvalue : TYPE :,\
+	EXP lvalue : EXP :,\
+	EXP lvalue : EXP :,\
+	EXP : EXP :\
+    ) STATEMENT DECONS_exp_designated_subscript #
+#pragma interface DECONS_exp_designated_subscript
+
+#pragma token PROC(\
+	EXP : DESTROYER :,\
+	EXP lvalue : TYPE :,\
+	EXP lvalue : EXP :,\
+	EXP lvalue : EXP :,\
+	EXP : EXP :\
+    ) STATEMENT DESTROY_exp_designated_subscript #
+#pragma interface DESTROY_exp_designated_subscript
+
+
 /* Operations for field dummy of union EXP */
 
 #pragma token EXP const : unsigned : exp_dummy_tag #
