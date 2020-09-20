@@ -30,6 +30,7 @@ SRCS+=	identifier.c
 SRCS+=	initialise.c
 SRCS+=	instance.c
 SRCS+=	inttype.c
+SRCS+=  in_order_inits.c
 SRCS+=	label.c
 SRCS+=	member.c
 SRCS+=	merge.c

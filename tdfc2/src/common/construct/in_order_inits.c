@@ -56,6 +56,7 @@
 #include <construct/initialise.h>
 #include <construct/instance.h>
 #include <construct/inttype.h>
+#include <construct/in_order_inits.h>
 #include <construct/namespace.h>
 #include <construct/overload.h>
 #include <construct/statement.h>
@@ -92,6 +93,11 @@
 
 void
 iio_realloc_copy_in(InitialisersInOrder_t *designated_inits, EXP e) {
+	int new_limit = designated_inits->iio_cur + 1;
+	if (designated_inits->iio_len < new_limit) {
+		designated_inits->iio_len = new_limit;
+	}
+
 	while (designated_inits->iio_cap <= designated_inits->iio_len) {
 		designated_inits->iio_cap =
 			RESIZE_MUL * designated_inits->iio_cap + RESIZE_ADD;
@@ -100,8 +106,7 @@ iio_realloc_copy_in(InitialisersInOrder_t *designated_inits, EXP e) {
 		designated_inits->iio_refs = new_refs;
 	}
 
-	designated_inits->iio_refs[designated_inits->iio_len] = e;
-	designated_inits->iio_len++;
+	iio_replace(designated_inits, designated_inits->iio_cur++, e);
 }
 
 /* XXX - Figure out memory mgmt */

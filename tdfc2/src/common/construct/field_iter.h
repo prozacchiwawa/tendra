@@ -56,7 +56,7 @@ typedef struct _FieldIteratorBody_t FieldIteratorBody_t;
 typedef struct _FieldIterator_t {
 	BUFFER *bf;
 	FieldIteratorBody_t *body;
-	int overall_index;
+	unsigned long overall_index;
 } FieldIterator_t;
 
 /*
@@ -72,6 +72,11 @@ int field_iterator_pop(FieldIterator_t *_sf_iter);
 		allows the previous layer to continue.
 */
 void field_iterator_push(FieldIterator_t *_sf_iter, TYPE t, CV_SPEC cv);
+
+/*
+	  Return the current recursion level to the start so it can be replayed.
+*/
+void field_iterator_rewind(FieldIterator_t *_sf_iter);
 
 /*
 		Begin use of a FieldIterator_t, which may be declared:
@@ -112,13 +117,13 @@ OFFSET field_iterator_get_offset(FieldIterator_t *_sf_iter);
 /*
 		Get the index of the currently iterated item.
 */
-int field_iterator_get_index(FieldIterator_t *_sf_iter);
+unsigned long field_iterator_get_index(FieldIterator_t *_sf_iter);
 
 /*
 		Get the overall index of the currently iterated item as though each scalar
 		element of every embedded structure is a sibling at the same level.
 */
-int field_iterator_get_overall_index(FieldIterator_t *_sf_iter);
+unsigned long field_iterator_get_overall_index(FieldIterator_t *_sf_iter);
 
 /*
 		Destroy any used heap space.	Will automatically destroy recursion.

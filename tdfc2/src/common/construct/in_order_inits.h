@@ -18,7 +18,7 @@
 		Allows random access in a nicer fasion than LIST(EXP).
 */
 typedef struct _InitialisersInOrder_t {
-	int iio_cap, iio_len;
+	int iio_cap, iio_cur, iio_len;
 	EXP *iio_refs;
 } InitialisersInOrder_t;
 
@@ -27,6 +27,12 @@ typedef struct _InitialisersInOrder_t {
 */
 void
 iio_realloc_copy_in(InitialisersInOrder_t *designated_inits, EXP e);
+
+/*
+	  Set the cursor to a new location.
+*/
+void
+iio_seek(InitialisersInOrder_t *designated_inits, int target);
 
 /*
 	  Replace an expression in the vector.

@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include <shared/check.h>
 #include <shared/error.h>
@@ -1800,14 +1801,36 @@ bfprint_designator_exp(BUFFER *name_target, EXP e) {
 	}
 }
 
-static int
-designator_prefix_match(const char *iter_member, BUFFER *name_target, LIST(EXP) init_exps) {
-	EXP e = DEREF_exp(HEAD_list(init_exps));
-	unsigned tag = TAG_exp(e);
+static unsigned long subscript_compute_idx(EXP e) {
+}
 
-	bfprint_designator_exp(name_target, e);
+static void
+handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder_t *designated_inits,
+																 TYPE t, CV_SPEC cv, LIST(EXP) *r, ERROR *err);
 
-	return strncmp(name_target.start, item_member, strlen(item_member)) == 0;
+static EXP
+designated_aggregate_wrap(FieldIterator_t *sort_iter, InitialisersInOrder_t *designated_inits, TYPE s, CV_SPEC cv, EXP inner_exp, ERROR *err) {
+	LIST(EXP) elist = NULL_list(EXP);
+	int iio_started = designated_inits->iio_cur;
+	unsigned tag = TAG_exp(inner_exp);
+
+	CONS_list(inner_exp, elist, elist);
+
+	if (tag == exp_designated_name_tag) {
+		handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &elist, err);
+		elist = NULL_list(EXP);
+		iio_reduce(designated_inits, iio_started, &elist);
+		MAKE_exp_aggregate(s, elist, 0, inner_exp);
+	} else if (tag == exp_designated_subscript_tag) {
+		handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &elist, err);
+		elist = NULL_list(EXP);
+		iio_reduce(designated_inits, iio_started, &elist);
+		MAKE_exp_aggregate(s, elist, 0, inner_exp);
+	} else {
+		MAKE_exp_aggregate(s, elist, 0, inner_exp);
+	}
+
+	return inner_exp;
 }
 
 /*
@@ -1834,7 +1857,7 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 {
 	LIST(EXP) p = *r;
 	int i = 0;
-	int iio_started = designated_inits->iio_len;
+	int iio_started = designated_inits->iio_cur;
 	unsigned type_tag = TAG_type(t);
 	EXP new_aggregate = NULL_exp;
 	LIST(EXP) result_args = NULL_list(EXP);
@@ -1842,11 +1865,13 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 	if (type_tag == type_array_tag) {
 		TYPE s = DEREF_type(type_array_sub(t));
 		int str = is_char_array(s);
-		NAT array_bound = get_array_bound(t);
+		unsigned long array_bound = get_nat_value(DEREF_nat(type_array_size(t)));
 
 		while (IS_NULL_list(p) &&
-					 (!array_is_bounded(t) || field_iterator_get_index(sort_iter) < array_bound) &&
-					 field_iter_next(sort_iter))
+					 (array_bound == EXTENDED_MAX ||
+						field_iterator_get_index(sort_iter) < array_bound
+					 ) &&
+					 field_iterator_next(sort_iter))
 		{
 			unsigned tag;
 			EXP e = get_aggr_elem(p, &tag);
@@ -1859,22 +1884,21 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 				LIST(EXP) inner_args = DEREF_list(exp_aggregate_args(e));
 
 				field_iterator_push(sort_iter, s, cv);
-				handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &inner_args);
+				handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &inner_args, err);
 				field_iterator_pop(sort_iter);
 			} else if (tag == exp_designated_subscript_tag) {
-				NAT n;
-				NAT current_idx = field_iterator_get_index(sort_iter);
-				EXP inner_exp = subscript_get_initialiser(e);
-				int extended = 0;
+				EXP inner_exp = exp_designated_subscript_member_initialiser(e);
 				unsigned stag = TAG_type(s);
+				unsigned long extended = 0;
+				unsigned long want_index = subscript_compute_idx(e);
+				unsigned long current_idx = field_iterator_get_index(sort_iter);
 
-				subscript_compute_idx(e, &n);
-
-				while (current_idx + extended <= n) {
+				while (current_idx + extended <= want_index) {
 					EXP aggregate = NULL_exp;
 
 					if (stag == type_array_tag || stag == type_compound_tag) {
-						MAKE_exp_aggregate(s, NULL_list, 0, aggregate);
+						/* XXX Put in a proper empty 0 */
+						MAKE_exp_aggregate(s, NULL_list(EXP), 0, aggregate);
 					} else {
 						/* XXX Make a better initialiser, maybe constant 0? */
 						aggregate = NULL_exp;
@@ -1884,7 +1908,14 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 					extended++;
 				}
 
-				iio_replace(designated_inits, n, designated_aggregate_wrap(inner_exp));
+				inner_exp = designated_aggregate_wrap(sort_iter, designated_inits, t, cv, inner_exp, err);
+				iio_replace(designated_inits, want_index, inner_exp);
+
+				/* XXX Rewind only this level of sort_iter */
+				field_iterator_rewind(sort_iter);
+
+				/* Synchronize to the current cursor */
+				while (field_iterator_get_index(sort_iter) < want_index+1) ;
 			} else {
 				iio_realloc_copy_in(designated_inits, e);
 			}
@@ -1895,14 +1926,14 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 			}
 		}
 
-		iio_reduce_to_aggregate(designated_inits, iio_started, &result_args);
+		result_args = NULL_list(EXP);
+		iio_reduce(designated_inits, iio_started, &result_args);
 		MAKE_exp_aggregate(s, result_args, 0, new_aggregate);
-	} else if (ttag == type_compound_tag) {
+	} else if (type_tag == type_compound_tag) {
 		LIST(EXP) result_args = NULL_list(EXP);
 		int len_before_init = designated_inits->iio_len;
 
-		while (IS_NULL_list(p) && field_iter_next(sort_iter)) {
-		{
+		while (IS_NULL_list(p) && field_iterator_next(sort_iter)) {
 			unsigned tag;
 			EXP e = get_aggr_elem(p, &tag);
 			TYPE s = field_iterator_get_subtype(sort_iter);
@@ -1911,21 +1942,21 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 				LIST(EXP) inner_args = DEREF_list(exp_aggregate_args(e));
 
 				field_iterator_push(sort_iter, s, cv);
-				handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &inner_args);
+				handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &inner_args, err);
 				field_iterator_pop(sort_iter);
 			} else if (tag == exp_designated_name_tag) {
 				/* We've got a designated initialiser in a struct.  We'll need to identify the
 					 index of the branch it refers to, so we'll iterate that type to find it.
 				*/
+				int search_success;
 				BUFFER have_buf = { 0 };
 				BUFFER want_buf = { 0 };
 				FieldIterator_t search_iter = { &have_buf };
 				IDENTIFIER id = DEREF_id(exp_designated_name_member_name(e));
 				HASHID hid = DEREF_hashid(id_name(id));
-				bfputc(want_buf, '.');
-				IGNORE print_hashid(hid, 1, 0, &want_buf);
-				int search_success;
+				bfputc(&want_buf, '.');
 
+				IGNORE print_hashid(hid, 1, 0, &want_buf, 0);
 				field_iterator_init(&search_iter, t, cv);
 
 				while ((search_success = field_iterator_next(&search_iter))) {
@@ -1935,8 +1966,11 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 				}
 
 				if (search_success) {
-					int have_idx = field_iterator_get_index(sort_iter);
-					int want_idx = field_iterator_get_index(&search_iter);
+					TYPE s;
+					unsigned stag;
+					EXP inner_exp;
+					unsigned long have_idx = field_iterator_get_index(sort_iter);
+					unsigned long want_idx = field_iterator_get_index(&search_iter);
 
 					/* We'll reset the iterator here, and leave with an allocated iterator.
 						 the outer scope will free it.
@@ -1950,11 +1984,12 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 
 					while (field_iterator_next(&search_iter) && have_idx <= want_idx) {
 						EXP aggregate = NULL_exp;
-						TYPE s = field_iterator_get_subtype(t);
-						unsigned stag = TAG_type(s);
+
+						s = field_iterator_get_subtype(sort_iter);
+						stag = TAG_type(s);
 
 						if (stag == type_array_tag || stag == type_compound_tag) {
-							MAKE_exp_aggregate(s, NULL_list, 0, aggregate);
+							MAKE_exp_aggregate(s, NULL_list(EXP), 0, aggregate);
 						} else {
 							/* XXX Make a better initialiser, maybe constant 0? */
 							aggregate = NULL_exp;
@@ -1964,7 +1999,17 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 						have_idx++;
 					}
 
-					iio_replace(designated_inits, want_idx, designated_aggregate_wrap(inner_exp));
+					s = field_iterator_get_subtype(sort_iter);
+					stag = TAG_type(s);
+
+					inner_exp = designated_aggregate_wrap(sort_iter, designated_inits, s, cv, inner_exp, err);
+					iio_replace(designated_inits, want_idx, inner_exp);
+
+					/* XXX Rewind only this level of sort_iter */
+					field_iterator_rewind(sort_iter);
+
+					/* Synchronize to the current cursor */
+					while (field_iterator_get_index(sort_iter) < want_idx+1 && field_iterator_next(sort_iter)) ;
 				} else {
 					/* XXX Return error */
 					iio_realloc_copy_in(designated_inits, NULL_exp);
@@ -1975,7 +2020,7 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 				free_buffer(&want_buf);
 			} else { /* Greedy consume flat */
 				field_iterator_push(sort_iter, s, cv);
-				handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &p);
+				handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &p, err);
 				field_iterator_pop(sort_iter);
 			}
 
@@ -1985,10 +2030,12 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 			}
 		}
 
-		iio_reduce_to_aggregate(designated_inits, iio_started, &result_args);
-		MAKE_exp_aggregate(s, result_args, 0, new_aggregate);
+		iio_reduce(designated_inits, iio_started, &result_args);
+		MAKE_exp_aggregate(t, result_args, 0, new_aggregate);
 	} else {
-		new_aggregate = e;
+		CONS_list(DEREF_exp(HEAD_list(p)), result_args, result_args);
+		MAKE_exp_aggregate(t, result_args, 0, new_aggregate);
+		p = TAIL_list(p);
 	}
 
 	iio_realloc_copy_in(designated_inits, new_aggregate);
@@ -2017,25 +2064,9 @@ init_aggr_designated(FieldIterator_t *sf_iter, TYPE t, CV_SPEC cv, LIST(EXP) *r,
 
 	field_iterator_init(&sort_iter, t, cv_none);
 
-	/* Fully iterate with sort_iter, inserting or replacing each value
-		 in the hash table as we observe it.
-
-		 This is a radix-like sort.  In the first pass, we copy every item
-		 we have into the list, then for each matching string prefix in
-		 the field iterator into designated_inits, we set pivot_low and
-		 pivot_high, move the match into the next position at pivot_high.
-
-		 At that point, we can descend one recursion level, sorting over
-		 pivot_low to pivot_high.
-	*/
-
 	/* Do initial copy */
-	handle_designated_with_aggregate(&sort_iter, &designated_inits, t, cv, &p);
-
-	/* Rebuild initializer list (cons in reverse order) */
-	for (i = designated_inits.iio_len - 1; i >= 0; i++) {
-		CONS_list(designated_inits.iio_refs[i], elist, elist);
-	}
+	handle_designated_with_aggregate(&sort_iter, &designated_inits, t, cv, &p, err);
+	iio_reduce(&designated_inits, 0, &elist);
 
 	iio_free(&designated_inits);
 	field_iterator_free(&sort_iter);

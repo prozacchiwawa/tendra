@@ -88,8 +88,8 @@ typedef struct _FieldIteratorBody_t {
 	TYPE parent_type;
 	TYPE member_type;
 
-	int m;
-	int c;
+	unsigned long m;
+	unsigned long c;
 
 	CV_SPEC cv;
 
@@ -191,11 +191,11 @@ OFFSET field_iterator_get_offset(FieldIterator_t *_sf_iter) {
 	}
 }
 
-int field_iterator_get_index(FieldIterator_t *_sf_iter) {
+unsigned long field_iterator_get_index(FieldIterator_t *_sf_iter) {
 	return _sf_iter->body->c;
 }
 
-int field_iterator_get_overall_index(FieldIterator_t *_sf_iter) {
+unsigned long field_iterator_get_overall_index(FieldIterator_t *_sf_iter) {
 	return _sf_iter->overall_index;
 }
 
@@ -273,6 +273,14 @@ CV_SPEC field_iterator_get_effective_cv_spec(FieldIterator_t *_sf_iter) {
 		CV_SPEC result = 0;
 		return result;
 	}
+}
+
+void field_iterator_rewind(FieldIterator_t *_sf_iter) {
+	FieldIteratorBody_t *sf_iter = _sf_iter->body;
+	TYPE t = sf_iter->t;
+	CV_SPEC cv = sf_iter->cv;
+	field_iterator_pop(_sf_iter);
+	field_iterator_push(_sf_iter, t, cv);
 }
 
 int field_iterator_next(FieldIterator_t *_sf_iter) {
