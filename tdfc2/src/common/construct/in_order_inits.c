@@ -132,6 +132,11 @@ iio_reduce(InitialisersInOrder_t *designated_inits, int target, LIST(EXP) *r) {
 }
 
 void
+iio_seek(InitialisersInOrder_t *designated_inits, int target) {
+	designated_inits->iio_cur = target;
+}
+
+void
 iio_free(InitialisersInOrder_t *designated_inits) {
 	xfree(designated_inits->iio_refs);
 }

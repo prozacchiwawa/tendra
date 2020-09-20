@@ -1817,11 +1817,13 @@ designated_aggregate_wrap(FieldIterator_t *sort_iter, InitialisersInOrder_t *des
 	CONS_list(inner_exp, elist, elist);
 
 	if (tag == exp_designated_name_tag) {
+		inner_exp = exp_designated_name_member_initialiser(inner_exp);
 		handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &elist, err);
 		elist = NULL_list(EXP);
 		iio_reduce(designated_inits, iio_started, &elist);
 		MAKE_exp_aggregate(s, elist, 0, inner_exp);
 	} else if (tag == exp_designated_subscript_tag) {
+		inner_exp = exp_designated_subscript_member_initialiser(inner_exp);
 		handle_designated_with_aggregate(sort_iter, designated_inits, s, cv, &elist, err);
 		elist = NULL_list(EXP);
 		iio_reduce(designated_inits, iio_started, &elist);
@@ -1860,14 +1862,19 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 	int iio_started = designated_inits->iio_cur;
 	unsigned type_tag = TAG_type(t);
 	EXP new_aggregate = NULL_exp;
+	NAT zero = NULL_nat;
 	LIST(EXP) result_args = NULL_list(EXP);
+
+	MAKE_nat_small(0, zero);
+
+	fprintf(stderr, "handle_designated_with_aggregate type = %u examining %s\n", TAG_type(t), sort_iter->bf->start);
 
 	if (type_tag == type_array_tag) {
 		TYPE s = DEREF_type(type_array_sub(t));
 		int str = is_char_array(s);
 		unsigned long array_bound = get_nat_value(DEREF_nat(type_array_size(t)));
 
-		while (IS_NULL_list(p) &&
+		while (!IS_NULL_list(p) &&
 					 (array_bound == EXTENDED_MAX ||
 						field_iterator_get_index(sort_iter) < array_bound
 					 ) &&
@@ -1875,6 +1882,8 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 		{
 			unsigned tag;
 			EXP e = get_aggr_elem(p, &tag);
+
+			fprintf(stderr, "found exp type %u looking at member %s type %u\n", tag, sort_iter->bf->start, TAG_type(s));
 
 			/* Ordered to mirror init_aggr_aux */
 			if (tag == exp_string_lit_tag && str) {
@@ -1901,7 +1910,7 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 						MAKE_exp_aggregate(s, NULL_list(EXP), 0, aggregate);
 					} else {
 						/* XXX Make a better initialiser, maybe constant 0? */
-						aggregate = NULL_exp;
+						MAKE_exp_int_lit(s, zero, BOOL_FALSE, aggregate);
 					}
 
 					iio_realloc_copy_in(designated_inits, aggregate);
@@ -1930,13 +1939,17 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 		iio_reduce(designated_inits, iio_started, &result_args);
 		MAKE_exp_aggregate(s, result_args, 0, new_aggregate);
 	} else if (type_tag == type_compound_tag) {
-		LIST(EXP) result_args = NULL_list(EXP);
 		int len_before_init = designated_inits->iio_len;
 
-		while (IS_NULL_list(p) && field_iterator_next(sort_iter)) {
+		while (!IS_NULL_list(p) && field_iterator_next(sort_iter)) {
 			unsigned tag;
 			EXP e = get_aggr_elem(p, &tag);
 			TYPE s = field_iterator_get_subtype(sort_iter);
+			unsigned stag;
+
+			stag = TAG_type(s);
+
+			fprintf(stderr, "found exp type %u looking at member %s type %u\n", tag, sort_iter->bf->start, stag);
 
 			if (tag == exp_aggregate_tag) {
 				LIST(EXP) inner_args = DEREF_list(exp_aggregate_args(e));
@@ -1966,8 +1979,6 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 				}
 
 				if (search_success) {
-					TYPE s;
-					unsigned stag;
 					EXP inner_exp;
 					unsigned long have_idx = field_iterator_get_index(sort_iter);
 					unsigned long want_idx = field_iterator_get_index(&search_iter);
@@ -1982,23 +1993,31 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 					search_iter.bf = &have_buf;
 					field_iterator_init(&search_iter, t, cv);
 
-					while (field_iterator_next(&search_iter) && have_idx <= want_idx) {
-						EXP aggregate = NULL_exp;
+					while (field_iterator_next(&search_iter) && have_idx < want_idx) {
+						EXP initialiser = NULL_exp;
+						LIST(EXP) agg_list = NULL_list(EXP);
 
 						s = field_iterator_get_subtype(sort_iter);
 						stag = TAG_type(s);
 
+						MAKE_exp_int_lit(s, zero, BOOL_FALSE, initialiser);
+						fprintf(stderr, "Creating initialiser for %s\n", search_iter.bf->start);
+						inner_exp = designated_aggregate_wrap(sort_iter, designated_inits, s, cv, initialiser, err);
+						CONS_list(initialiser, agg_list, agg_list);
+
 						if (stag == type_array_tag || stag == type_compound_tag) {
-							MAKE_exp_aggregate(s, NULL_list(EXP), 0, aggregate);
+							MAKE_exp_aggregate(s, agg_list, 0, initialiser);
 						} else {
-							/* XXX Make a better initialiser, maybe constant 0? */
-							aggregate = NULL_exp;
+							/* XXX ERROR, trying to initialise a non-aggregate with designated member
+								 name. */
+						  initialiser = NULL_exp;
 						}
 
-						iio_realloc_copy_in(designated_inits, aggregate);
+						iio_realloc_copy_in(designated_inits, initialiser);
 						have_idx++;
 					}
 
+					iio_seek(designated_inits, want_idx);
 					s = field_iterator_get_subtype(sort_iter);
 					stag = TAG_type(s);
 
