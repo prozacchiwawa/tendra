@@ -48,6 +48,12 @@ void
 iio_reduce(InitialisersInOrder_t *designated_inits, int target, LIST(EXP) *r);
 
 /*
+	   Take a single expression off the collection.
+*/
+EXP
+iio_pop(InitialisersInOrder_t *designated_inits);
+
+/*
 	  Ensure that resources used are freed.
 */
 void

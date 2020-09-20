@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 
 #include <shared/check.h>
 #include <shared/error.h>
@@ -99,9 +100,10 @@ iio_realloc_copy_in(InitialisersInOrder_t *designated_inits, EXP e) {
 	}
 
 	while (designated_inits->iio_cap <= designated_inits->iio_len) {
+		EXP *new_refs;
 		designated_inits->iio_cap =
 			RESIZE_MUL * designated_inits->iio_cap + RESIZE_ADD;
-		EXP *new_refs =
+		new_refs =
 			xrealloc_nof(designated_inits->iio_refs, EXP, designated_inits->iio_cap);
 		designated_inits->iio_refs = new_refs;
 	}
@@ -112,6 +114,7 @@ iio_realloc_copy_in(InitialisersInOrder_t *designated_inits, EXP e) {
 /* XXX - Figure out memory mgmt */
 void
 iio_replace(InitialisersInOrder_t *designated_inits, int target, EXP e) {
+	assert(e);
 	designated_inits->iio_refs[target] = e;
 }
 
@@ -128,11 +131,23 @@ iio_reduce(InitialisersInOrder_t *designated_inits, int target, LIST(EXP) *r) {
 		CONS_list(designated_inits->iio_refs[i], *r, *r);
 	}
 
-	designated_inits->iio_len = target;
+	assert(target <= designated_inits->iio_len);
+	designated_inits->iio_cur = designated_inits->iio_len = target;
+}
+
+EXP
+iio_pop(InitialisersInOrder_t *designated_inits) {
+	EXP exp;
+
+	assert(designated_inits->iio_len > 0);
+	exp = designated_inits->iio_refs[designated_inits->iio_len - 1];
+	designated_inits->iio_len = designated_inits->iio_cur = designated_inits->iio_len - 1;
+	return exp;
 }
 
 void
 iio_seek(InitialisersInOrder_t *designated_inits, int target) {
+	assert(target <= designated_inits->iio_len);
 	designated_inits->iio_cur = target;
 }
 
