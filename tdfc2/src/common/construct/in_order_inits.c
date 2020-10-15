@@ -128,7 +128,8 @@ iio_reduce(InitialisersInOrder_t *designated_inits, int target, LIST(EXP) *r) {
 	}
 
 	for (i = designated_inits->iio_len - 1; i >= target; i--) {
-		CONS_list(designated_inits->iio_refs[i], *r, *r);
+		CONS_list(NULL_exp, *r, *r);
+		COPY_exp(HEAD_list(*r), designated_inits->iio_refs[i]);
 	}
 
 	assert(target <= designated_inits->iio_len);
