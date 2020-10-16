@@ -1810,7 +1810,6 @@ bfprint_designator_exp(BUFFER *name_target, EXP e) {
 			bfputc(name_target, ']');
 			e = DEREF_exp(exp_designated_subscript_member_initialiser(e));
 		}
-		fprintf(stderr, "prefix match build: %s\n", name_target->start);
 		tag = TAG_exp(e);
 	}
 }
@@ -1862,9 +1861,27 @@ print_initialiser_list(LIST(EXP) lst) {
 	}
 }
 
-static unsigned long
-name_find_idx(EXP e) {
-	return 1;
+static int
+name_find_idx(TYPE t, CV_SPEC cv, EXP e, unsigned long *result_idx) {
+	int found = 0;
+	BUFFER their_buf = { 0 };
+	BUFFER our_buf = { 0 };
+	FieldIterator_t field_iter = { &their_buf };
+
+	field_iterator_init(&field_iter, t, cv);
+	bfprint_designator_exp(&our_buf, e);
+
+	while (field_iterator_next(&field_iter)) {
+		if (!strcmp(their_buf.start, our_buf.start)) {
+			*result_idx = field_iterator_get_index(&field_iter);
+			found = 1;
+			break;
+		}
+	}
+
+	field_iterator_free(&field_iter);
+
+	return found;
 }
 
 /*
@@ -1955,18 +1972,22 @@ handle_designated_with_aggregate(FieldIterator_t *sort_iter, InitialisersInOrder
 
 				unsigned stag = TAG_type(s);
 				unsigned long extended = 0;
-				unsigned long want_index =
-					tag == exp_designated_subscript_tag ?
-					subscript_compute_idx(e) :
-					name_find_idx(e);
+				unsigned long want_index = 0;
 				unsigned long current_idx = field_iterator_get_index(sort_iter);
 				TYPE st = field_iterator_get_subtype(sort_iter);
-				unsigned long sttag = TAG_type(st);
+				unsigned sttag = TAG_type(st);
+
+				if (tag == exp_designated_subscript_tag) {
+					want_index = subscript_compute_idx(e);
+				} else {
+					int found = name_find_idx(t, cv, e, &want_index);
+					assert(found);
+				}
 
 				bfprint_designator_exp(&aggprint, e);
 				fprintf(stderr, "designator %s, want idx %lu\n", aggprint.start, current_idx);
 
-				while (current_idx + extended <= want_index) {
+				while (current_idx + extended < want_index) {
 					EXP aggregate = NULL_exp;
 
 					assert(s);
